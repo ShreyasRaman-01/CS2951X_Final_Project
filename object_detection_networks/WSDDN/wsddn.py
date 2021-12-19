@@ -150,7 +150,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
     def call(self, image, labels, spatial_reg=False):
         '''Performs the forward pass of the WSDDN on input 'x' '''
-
+        pdb.set_trace()
 
         '''VGG backbone and pooling: pre SPP or ROI pool'''
         #running input on the base pre-trained VGG16 or VGG19 model
