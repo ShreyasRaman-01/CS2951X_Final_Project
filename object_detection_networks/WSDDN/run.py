@@ -139,8 +139,6 @@ def parse_arguments():
 
     parser.add_argument(
         '--visualize',
-        required = True,
-        choices = [True, False],
         help = 'specify if training losses (validation and train) have to be visualized + saved '
     )
 
