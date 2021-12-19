@@ -163,9 +163,13 @@ class WeaklySupervisedDetection(tf.keras.Model):
         '''Get the regions of interest (ROIs) using the RPN layer '''
         [objectness, original_rois, backbone_pre_pooling_output] = self.rpn_layer(backbone_pre_pooling_output)
 
+        pdb.set_trace()
+        valid_rois = tf.where(objectness>hp.objectness_threshold)
+        #original_rois = tf.gather()
+        new_rois = original_rois.clone()
+        new_rois = new_rois.reshape((1, 6, 6, -1, 4))
+        new_rois = new_rois[(objectness > hp.objectness_threshold)]
 
-        # valid_objectness = tf.where(objectness>hp.objectness_threshold)
-        # original_rois = tf.boolean_mask(original_rois, valid_objectness)
         #indexes the original_rois using the valid_objectness ROIs
 
 
