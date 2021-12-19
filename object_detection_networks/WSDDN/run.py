@@ -178,7 +178,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #iterate all images in each batch
             for image, label in zip(image_batch, label_batch):
 
-                image = np.expand_dims(image, axis=0)
+                image = tf.expand_dims(image, axis=0)
 
                 pdb.set_trace()
 
