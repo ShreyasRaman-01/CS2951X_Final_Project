@@ -67,7 +67,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
     def __init__(self, backbone):
-        super(YourModel, self).__init__()
+        super(WeaklySupervisedDetection, self).__init__()
 
         #create learning rate scheduler
         values = [hp.learning_rate_1, hp.learning_rate_2, hp.learning_rate_2]
