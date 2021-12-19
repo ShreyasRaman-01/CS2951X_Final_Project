@@ -6,9 +6,10 @@ from tensorflow.keras.callbacks import LearningRateScheduler
 # from tensorboard_utils import CustomModelSaver
 from tensorflow_addons.layers import SpatialPyramidPooling2D as SPP
 
-from tensorflow.keras.applications import vgg16, vgg19
-from keras.applications.vgg16 import preprocess_input_16
-from keras.applications.vgg19 import preprocess_input_19
+from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.applications.vgg19 import VGG19
+from tensorflow.keras.applications.vgg16 import preprocess_input_16
+from tensorflow.keras.applications.vgg19 import preprocess_input_19
 
 from tensorflow.nn import softmax as Softmax
 
@@ -79,12 +80,12 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         #setup backbone architecture: pre-trained VGG network
         if backbone=='VGG16':
-            self.backbone = vgg16.VGG16(weights = 'imagenet', include_top=False, pooling=None)
+            self.backbone = VGG16(weights = 'imagenet', include_top=False, pooling=None)
             self.preprocess = preprocess_input_16
             self.feat_map_scaling = 16
 
         elif backbone=='VGG19':
-            self.backbone = vgg19.VGG19(weights = 'imagenet', include_top=False, pooling = None)
+            self.backbone = VGG19(weights = 'imagenet', include_top=False, pooling = None)
             self.preprocess = preprocess_input_19
             self.feat_map_scaling = 19
 
