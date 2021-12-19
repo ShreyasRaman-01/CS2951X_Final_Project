@@ -90,7 +90,7 @@ class DatasetCreator:
         #iterating the testing dataset + loading images
         for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game, 'small', 'test'))):
 
-            self.test_data.append(os.path.join(path_to_data, self.game, 'test', image), class_label)
+            self.test_data.append([os.path.join(path_to_data, self.game, 'test', image), class_label])
 
 
         self.train_data = np.array(self.train_data); self.test_data = np.array(self.test_data)
