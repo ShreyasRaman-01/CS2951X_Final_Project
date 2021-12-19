@@ -84,6 +84,8 @@ class DatasetCreator:
 
             if i%hp.batch_size==0:
 
+                pdb.set_trace()
+
                 self.train_data.append(batch_of_images)
                 batch_of_images = []
 
