@@ -139,7 +139,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             x_regr: bboxes regression
             base_layers: vgg in here
         """
-        # x = Conv2D(512, (2, 2), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
+        x = Conv2D(512, (2, 2), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
 
         x_class = Conv2D(hp.num_anchors, (1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')(x)
         x_regr = Conv2D(hp.num_anchors * 4, (1, 1), activation='linear', kernel_initializer='zero', name='rpn_out_regress')(x)
