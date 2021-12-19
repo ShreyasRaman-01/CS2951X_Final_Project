@@ -327,6 +327,8 @@ def main(ARGS):
     data_generator = DatasetCreator(ARGS.atari_game)
     dataset = data_generator.create_datasets(PATH_TO_DATA)
 
+    pdb.set_trace()
+
     #training or testing the WSDDN model
     if ARGS.task=='test':
         test(model, dataset.test_data)
