@@ -8,6 +8,7 @@ import hyperparameters as hp
 from wsddn import WeaklySupervisedDetection as WSDDN_Model, learning_rate_scheduler
 # from preprocessing import preprocessing_factory
 from matplotlib import pyplot as plt
+import numpy as np
 
 #for progress bar with metrics update
 from keras.utils import generic_utils
