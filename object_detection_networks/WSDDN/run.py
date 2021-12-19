@@ -12,6 +12,9 @@ from matplotlib import pyplot as plt
 #for progress bar with metrics update
 from keras.utils import generic_utils
 
+#for debugging
+import pdb
+
 
 # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
