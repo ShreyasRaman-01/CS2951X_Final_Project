@@ -1,4 +1,6 @@
 import tensorflow as tf
+tf.compat.v1.enable_eager_execution()
+
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Flatten, Dense, BatchNormalization
 
@@ -166,8 +168,8 @@ class WeaklySupervisedDetection(tf.keras.Model):
         pdb.set_trace()
         valid_rois = tf.where(objectness>hp.objectness_threshold)
         #original_rois = tf.gather()
-        new_rois = tf.identity(original_rois)
-        new_rois = tf.reshape(new_rois, (1, 6, 6, -1, 4))
+        new_rois = tf.reshape(tf.identity(original_rois), (1, 6, 6, -1, 4))
+        val_rois = tf.where(objectness > hp.objectness_threshold)
         new_rois = new_rois[(objectness > hp.objectness_threshold)]
 
         #indexes the original_rois using the valid_objectness ROIs
