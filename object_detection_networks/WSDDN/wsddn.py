@@ -16,7 +16,7 @@ from tensorflow.nn import softmax as Softmax
 import hyperparameters as hp
 from os.path import abspath
 
-from region_proposal import RegionProposalNetwork as RPN
+# from region_proposal import RegionProposalNetwork as RPN
 from roi_pooling import ROI_Pooling
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.utils import register_keras_serializable
