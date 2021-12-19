@@ -1,5 +1,5 @@
 import tensorflow as tf
-tf.compat.v1.enable_eager_execution()
+tf.config.run_functions_eagerly(True)
 
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Flatten, Dense, BatchNormalization

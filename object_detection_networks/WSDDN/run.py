@@ -13,7 +13,7 @@ import numpy as np
 #for progress bar with metrics update
 from keras.utils import generic_utils
 import tensorflow as tf
-tf.compat.v1.enable_eager_execution()
+tf.config.run_functions_eagerly(True)
 
 import time
 #for debugging
