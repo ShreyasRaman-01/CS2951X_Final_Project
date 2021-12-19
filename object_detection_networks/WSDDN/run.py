@@ -219,7 +219,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
             x_batch = [Image.open(x[0]) for x in data_batch]
 
-            y_batch = data_batch[:,1]
+            y_batch = tf.Tensor(data_batch[:,1])
 
             #running training for each image
             loss_value = train_step(x_batch, y_batch, True)
