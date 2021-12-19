@@ -176,8 +176,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         with tf.GradientTape() as tape:
 
             #iterate all images in each batch
-            for image, original_rois, label in zip(image_batch, original_roi_batch, label_batch):
-                output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(image, original_rois, labels)
+            for image, label in zip(image_batch, label_batch):
+                output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(image, labels)
 
                 loss_value = loss_value + model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(labels, tf.float32)) + model.l2_regularizer() + spatial_regularizer_output
 
