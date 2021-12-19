@@ -44,7 +44,7 @@ def main(ARGS):
         if os.path.isfile(os.path.join(game_path,image_size)):
             continue
 
-        pdb.set_trace()
+        # pdb.set_trace()
 
         game_path = os.path.join(game_path, image_size)
 
