@@ -15,8 +15,8 @@ from keras.utils import generic_utils
 
 # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-PATH_TO_DATA = ''
-PATH_TO_WEIGHTS = ''
+PATH_TO_DATA = '/home/shreyas_sundara_raman/CS2951X_Final_Project/object_detection_networks/data'
+PATH_TO_WEIGHTS = '/home/shreyas_sundara_raman/CS2951X_Final_Project/object_detection_networks/WSDDN/weights'
 
 #create the weights saving path if it doesn't exist
 if not os.path.isdir(os.path.join(PATH_TO_WEIGHTS,str(hp.experiment_number))):
@@ -74,7 +74,7 @@ class DatasetCreator:
         batch_of_images = []
 
         #iterating the training dataset + loading images
-        for i, image in enumerate(os.path.listdir(os.path.join(path_to_data, self.game, 'train'))):
+        for i, image in enumerate(os.path.listdir(os.path.join(path_to_data, self.game,'small', 'train'))):
 
             batch_of_images.append([os.path.join(path_to_data, self.game, 'train', image), class_label])
 
@@ -85,7 +85,7 @@ class DatasetCreator:
 
 
         #iterating the testing dataset + loading images
-        for i, image in enumerate(os.path.listdir(os.path.join(path_to_data, self.game, 'test'))):
+        for i, image in enumerate(os.path.listdir(os.path.join(path_to_data, self.game, 'small', 'test'))):
 
             self.test_data.append(os.path.join(path_to_data, self.game, 'test', image), class_label)
 
@@ -119,12 +119,6 @@ def parse_arguments():
         required = True,
         choices = ['MsPacman-v0','BreakoutDeterministic-v4'],
         help = 'specify which game/environment on which WSDDN needs to run'
-    )
-
-    parser.add_argument(
-        '--data',
-        default = os.path.abspath(PATH_TO_DATA),
-        help = 'enter path where dataset of images are stored'
     )
 
     parser.add_argument(
@@ -245,11 +239,19 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                     print('Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, loss_value))
 
                     min_val_loss = loss_value
-                    model.save_weights(  os.path.join( PATH_TO_WEIGHTS, str(hp.experiment_number), 'epoch_{}_loss{}.hdf5'.format(epoch, min_loss_value) )  )
+                    model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, min_loss_value) )  )
 
 
                 total_loss_val.append(loss_value)
 
+
+
+    #log and graph the losses using the log_path argument
+    plt.plot( range(hp.num_epochs*len(train_data[0])), total_loss_train )
+    plt.savefig( os.path.join(logs_path, 'train_loss.png') )
+
+    plt.plot( range( hp.num_epochs*( len(train_data[0])//hp.validation_batch_freq )  )  , total_loss_val )
+    plt.savefig( os.path.join(logs_path, 'val_loss.png') )
 
     return total_loss_train, total_loss_val
 
@@ -271,6 +273,7 @@ def test(model, test_data):
 def main(ARGS):
     '''Main function parsing input and executing data preprocessing, training + testing'''
 
+    pdb.set_trace()
     #updating hyperparameters based on number of classes to find
     hp.num_classes = ARGS.num_classes
 
@@ -285,12 +288,13 @@ def main(ARGS):
 
     if os.path.exists(ARGS.data):
         ARGS.data = os.path.abspath(ARGS.data)
+    else:
+        raise Exception('path to dataset {} is not valid or does not exist'.format(ARGS.data))
 
     #extracting data to save the weight checkpoints and logs (for losses or energy function)
-    checkpoint_path = os.path.join("checkpoints", hp.experiment_number)
+    checkpoint_path = os.path.join("weights", hp.experiment_number)
     logs_path = os.path.join("logs" , hp.experiment_number)
 
-    dataset = Dataset(ARGS.data)
 
     #create WSDDN model instance + pass in backbone architecture to use e.g. VGG16 or VGG19
     model = WSDDN_Model(ARGS.backbone)
@@ -315,7 +319,7 @@ def main(ARGS):
 
     #collect the dataset into a dictionary list
     data_generator = DatasetCreator(ARGS.atari_game)
-    dataset = data_generator.create_datasets(ARGS.data)
+    dataset = data_generator.create_datasets(PATH_TO_DATA)
 
     #training or testing the WSDDN model
     if ARGS.task=='test':
