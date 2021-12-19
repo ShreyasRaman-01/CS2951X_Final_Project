@@ -6,7 +6,7 @@ from datetime import datetime
 from PIL import Image
 import hyperparameters as hp
 from wsddn import WeaklySupervisedDetection as WSDDN_Model, learning_rate_scheduler
-from preprocessing import preprocessing_factory
+# from preprocessing import preprocessing_factory
 from matplotlib import pyplot as plt
 
 #for progress bar with metrics update
@@ -210,8 +210,9 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
 
             #preprocessing the image for VGG network
-            image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
-            x_batch = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in data_batch])
+            #image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
+            #x_batch = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in data_batch])
+            x_batch = data_batch[:,0]
 
             y_batch = data_batch[:,1]
 
@@ -228,8 +229,10 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             if batch_no%hp.validation_batch_freq==0:
 
                 #preprocessing the image for VGG network
-                image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
-                x_val = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in val_data])
+                # image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
+                #x_val = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in val_data])
+
+                x_val = val_data[:,0]
 
                 y_val = val_data[:,1]
 
