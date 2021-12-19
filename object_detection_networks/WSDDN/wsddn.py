@@ -212,7 +212,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         filtered_origin_rois = tf.convert_to_tensor(filtered_origin_rois)
 
-        '''Linear FCN after region proposal Pooling''''
+        '''Linear FCN after region proposal Pooling'''
 
         #after getting features from pooling, run the fully connected layers + perform softmax
         fc_output = self.fc6(rois_feature)
