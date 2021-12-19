@@ -222,7 +222,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #shuffle the batch of images first (both images and labels)
             np.random.shuffle(data_batch)
 
-            x_batch = [ np.asarray(Image.open(x[0])) for x in data_batch]
+            x_batch = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_size)) for x in data_batch]
 
             y_batch = list(data_batch[:,1])
 

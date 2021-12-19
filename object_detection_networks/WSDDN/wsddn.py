@@ -81,12 +81,12 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         #setup backbone architecture: pre-trained VGG network
         if backbone=='VGG16':
-            self.backbone = VGG16(weights = 'imagenet', include_top=False, pooling=None, input_shape = (84,84,3))
+            self.backbone = VGG16(weights = 'imagenet', include_top=False, pooling=None, input_shape = (120,120,3))
             self.preprocess = preprocess_input_16
             self.feat_map_scaling = 16
 
         elif backbone=='VGG19':
-            self.backbone = VGG19(weights = 'imagenet', include_top=False, pooling = None, input_shape = (84,84,3))
+            self.backbone = VGG19(weights = 'imagenet', include_top=False, pooling = None, input_shape = (120,120,3))
             self.preprocess = preprocess_input_19
             self.feat_map_scaling = 19
 
@@ -139,7 +139,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             x_regr: bboxes regression
             base_layers: vgg in here
         """
-        x = Conv2D(512, (3, 3), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
+        # x = Conv2D(512, (2, 2), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
 
         x_class = Conv2D(hp.num_anchors, (1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')(x)
         x_regr = Conv2D(hp.num_anchors * 4, (1, 1), activation='linear', kernel_initializer='zero', name='rpn_out_regress')(x)
@@ -161,11 +161,11 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
         '''Get the regions of interest (ROIs) using the RPN layer '''
-        [objectness, original_rois, block5_pooling_output] = self.rpn_layer(block5_pooling_output)
+        [objectness, original_rois, backbone_pre_pooling_output] = self.rpn_layer(backbone_pre_pooling_output)
 
 
-        valid_objectness = tf.where(objectness>hp.objectness_threshold)[0]
-        original_rois = original_rois[valid_objectness]
+        original_rois = [original_rois[i] for i in range(len(objectness)) if objectness[i]>hp.objectness_threshold]
+        
 
 
         '''Resizing the ROIs and pooling original proposals'''

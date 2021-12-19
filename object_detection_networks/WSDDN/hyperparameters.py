@@ -41,6 +41,7 @@ num_anchors = 9
 objectness_threshold = 0.7
 
 roi_pooling_ouput = [6,6]
+reshaped_size = (200,200)
 
 
 #compares the feature map discrepancies at fc7 for regions with IoU > threshold
