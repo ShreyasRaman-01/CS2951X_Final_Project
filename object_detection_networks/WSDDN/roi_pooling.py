@@ -1,6 +1,6 @@
 import tensorflow as tf
 import math
-import tensorflow.addons as tfa
+import tensorflow_addons as tfa
 
 import hyperparameters as hp
 
