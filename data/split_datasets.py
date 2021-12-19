@@ -34,7 +34,7 @@ def main(ARGS):
     #sample of data indexes to keep in test set
     test_set_sample = len(os.listdir(  os.path.join(game_path, 'small')  ))
     total_num_images = test_set_sample
-    test_set_sample = random.sample( range(test_set_sample), int(test_set_sample*test_percentage) )
+    test_set_sample = set(random.sample( range(test_set_sample), int(test_set_sample*test_percentage) ))
 
     print("Splitting dataset ......")
 
