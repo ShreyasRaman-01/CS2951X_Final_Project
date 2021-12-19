@@ -4,7 +4,7 @@ from tensorflow.keras.layers import \
 
 from tensorflow.keras.callbacks import LearningRateScheduler
 # from tensorboard_utils import CustomModelSaver
-from tensorflow_addons import SpatialPyramidPooling2D as SPP
+from tensorflow_addons.layers import SpatialPyramidPooling2D as SPP
 
 from tf.keras.applications import vgg16, vgg19
 from keras.applications.vgg16 import preprocess_input_16
