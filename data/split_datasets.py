@@ -14,7 +14,7 @@ def parse_arguments():
 
     parser.add_argument('--test_percentage', required=True, help='define percentage (0-1) of data to use in test set')
 
-    parser.add_argument('--atari_game', required=True, choice = ['MsPacman-v0','BreakoutDeterministic-v4'], help = 'specify which game/environment on which WSDDN needs to run')
+    parser.add_argument('--atari_game', required=True, choices = ['MsPacman-v0','BreakoutDeterministic-v4'], help = 'specify which game/environment on which WSDDN needs to run')
 
     return parser.parse_args()
 
