@@ -8,8 +8,8 @@ from tensorflow_addons.layers import SpatialPyramidPooling2D as SPP
 
 from tensorflow.keras.applications.vgg16 import VGG16
 from tensorflow.keras.applications.vgg19 import VGG19
-from tensorflow.keras.applications.vgg16 import preprocess_input_16
-from tensorflow.keras.applications.vgg19 import preprocess_input_19
+from tensorflow.keras.applications.vgg16 import preprocess_input as preprocess_input_16
+from tensorflow.keras.applications.vgg19 import preprocess_input as preprocess_input_19
 
 from tensorflow.nn import softmax as Softmax
 
