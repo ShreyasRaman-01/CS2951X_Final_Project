@@ -6,11 +6,11 @@ from tensorflow.keras.callbacks import LearningRateScheduler
 # from tensorboard_utils import CustomModelSaver
 from tensorflow_addons.layers import SpatialPyramidPooling2D as SPP
 
-from tf.keras.applications import vgg16, vgg19
+from tensorflow.keras.applications import vgg16, vgg19
 from keras.applications.vgg16 import preprocess_input_16
 from keras.applications.vgg19 import preprocess_input_19
 
-from tf.nn import softmax as Softmax
+from tensorflow.nn import softmax as Softmax
 
 import hyperparameters as hp
 from os.path import abspath
