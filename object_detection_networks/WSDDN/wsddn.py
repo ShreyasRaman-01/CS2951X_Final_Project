@@ -167,7 +167,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         valid_rois = tf.where(objectness>hp.objectness_threshold)
         #original_rois = tf.gather()
         new_rois = tf.identity(original_rois)
-        new_rois = new_rois.reshape((1, 6, 6, -1, 4))
+        new_rois = tf.reshape(new_rois, (1, 6, 6, -1, 4))
         new_rois = new_rois[(objectness > hp.objectness_threshold)]
 
         #indexes the original_rois using the valid_objectness ROIs
