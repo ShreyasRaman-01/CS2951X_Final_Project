@@ -326,15 +326,15 @@ def main(ARGS):
 
     #collect the dataset into a dictionary list
     data_generator = DatasetCreator(ARGS.atari_game)
-    dataset = data_generator.create_datasets(PATH_TO_DATA)
+    data_generator.create_datasets(PATH_TO_DATA)
 
     pdb.set_trace()
 
     #training or testing the WSDDN model
     if ARGS.task=='test':
-        test(model, dataset.test_data)
+        test(model, data_generator.test_data)
     elif ARGS.task=='train':
-        total_loss_train, total_loss_val = train(model, dataset.train_data, dataset.test_data, checkpoint_path, logs_path)
+        total_loss_train, total_loss_val = train(model, data_generator.train_data, data_generator.test_data, checkpoint_path, logs_path)
 
 
     if bool(ARGS.visualize):
