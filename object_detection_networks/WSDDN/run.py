@@ -291,8 +291,8 @@ def main(ARGS):
 
 
     #extracting data to save the weight checkpoints and logs (for losses or energy function)
-    checkpoint_path = os.path.join("weights", hp.experiment_number)
-    logs_path = os.path.join("logs" , hp.experiment_number)
+    checkpoint_path = os.path.join("weights", str(hp.experiment_number) )
+    logs_path = os.path.join("logs" , str(hp.experiment_number) )
 
 
     #create WSDDN model instance + pass in backbone architecture to use e.g. VGG16 or VGG19
