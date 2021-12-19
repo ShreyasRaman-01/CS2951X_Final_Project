@@ -59,7 +59,7 @@ def main(ARGS):
         train_path = os.path.join(game_path_size, 'train')
         test_path = os.path.join(game_path_size, 'test')
 
-        # pdb.set_trace()
+        pdb.set_trace()
 
         for i, image in enumerate( sorted(os.listdir(game_path_size)) ):
 
