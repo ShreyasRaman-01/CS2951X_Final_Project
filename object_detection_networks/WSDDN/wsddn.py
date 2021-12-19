@@ -3,7 +3,7 @@ from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Flatten, Dense, BatchNormalization
 
 from tensorflow.keras.callbacks import LearningRateScheduler
-from tensorboard_utils import CustomModelSaver
+# from tensorboard_utils import CustomModelSaver
 from tensorflow_addons import SpatialPyramidPooling2D as SPP
 
 from tf.keras.applications import vgg16, vgg19
