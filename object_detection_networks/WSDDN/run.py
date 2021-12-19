@@ -177,9 +177,9 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
             #iterate all images in each batch
             for image, label in zip(image_batch, label_batch):
-                output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(image, labels)
+                output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(image, label)
 
-                loss_value = loss_value + model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(labels, tf.float32)) + model.l2_regularizer() + spatial_regularizer_output
+                loss_value = loss_value + model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(label, tf.float32)) + model.l2_regularizer() + spatial_regularizer_output
 
 
         loss_value = loss_value/len(image_batch) #loss averaged over batch
