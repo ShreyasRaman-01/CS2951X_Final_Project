@@ -244,18 +244,25 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                 y_val = val_data[:,1]
 
                 #running training for each image
-                loss_value = train_step(x_val, y_val, True)
+                val_loss = train_step(x_val, y_val, True)
 
                 #update the minimum loss reference + save the weights files
-                if loss_value < min_val_loss:
+                if val_loss < min_val_loss:
 
-                    print('Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, loss_value))
+                    print('Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
 
-                    min_val_loss = loss_value
-                    model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, min_loss_value) )  )
+                    min_val_loss = val_loss
+                    model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
 
 
                 total_loss_val.append(loss_value)
+
+
+        end_time = time.time()
+
+        print('Training Loss: ', loss_value)
+        print('Validation Loss: ', val_loss)
+        print('Elapsed Time: ', end_time-start_time)
 
 
 
