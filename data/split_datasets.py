@@ -59,16 +59,17 @@ def main(ARGS):
         train_path = os.path.join(game_path, 'train')
         test_path = os.path.join(game_path, 'test')
 
+        pdb.set_trace()
 
         for i, image in enumerate( os.listdir(game_path) ):
 
             #move into the test set
             if i in test_set_sample:
-                shutil.move( os.path.join(game_path, image), os.path.join(test_path, image) )
+                shutil.move( os.path.join(game_path, image), test_path )
 
             #move into the train set
             else:
-                shutil.move( os.path.join(game_path, image), os.path.join(train_path, image) )
+                shutil.move( os.path.join(game_path, image), train_path )
 
 
 
