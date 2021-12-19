@@ -178,7 +178,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #iterate all images in each batch
             for image, label in zip(image_batch, label_batch):
 
-                # image = tf.expand_dims(image, axis=0)
+                image = [image]
                 pdb.set_trace()
 
                 output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
