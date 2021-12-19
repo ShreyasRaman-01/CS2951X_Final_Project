@@ -93,16 +93,13 @@ class WeaklySupervisedDetection(tf.keras.Model):
         for layer in self.backbone.layers[:-3]:
             layer.trainable = False
 
-
+        pdb.set_trace()
 
         #main WSDDN model, post VGG16 backbone
         self.wsddn_layers = [
 
             #ROI pooling layer
             ROI_Pooling,
-
-            #spatial pyramid pooling
-            SpatialPyramidPooling2D(),
 
 
             #batch normalization
