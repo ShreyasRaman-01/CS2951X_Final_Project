@@ -31,7 +31,7 @@ def main(ARGS):
     game_path = os.path.join(BASE_DATASET_PATH, game)
 
     #sample of data indexes to keep in test set
-    test_set_sample = len(os.listdir(game_path, 'small'))
+    test_set_sample = len(os.listdir(  os.path.join(game_path, 'small')  ))
     total_num_images = test_set_sample
     test_set_sample = random.sample( range(test_set_sample), int(test_set_sample*test_percentage) )
 
