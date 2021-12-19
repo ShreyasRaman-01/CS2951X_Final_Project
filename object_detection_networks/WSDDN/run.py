@@ -12,6 +12,7 @@ import numpy as np
 
 #for progress bar with metrics update
 from keras.utils import generic_utils
+import tensorflow as tf
 
 #for debugging
 import pdb
@@ -83,8 +84,6 @@ class DatasetCreator:
             batch_of_images.append([os.path.join(path_to_data, self.game, 'train', image), class_label])
 
             if (i+1)%hp.batch_size==0:
-
-                pdb.set_trace()
 
                 self.train_data.append(batch_of_images)
                 batch_of_images = []
