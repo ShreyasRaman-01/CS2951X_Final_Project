@@ -26,7 +26,7 @@ def main(ARGS):
     game = str(ARGS.atari_game)
 
 
-    BASE_DATASET_PATH = os.path.abspath('')
+    BASE_DATASET_PATH = os.path.abspath('/home/shreyas_sundara_raman/CS2951X_Final_Project/object_detection_networks/data')
 
     game_path = os.path.join(BASE_DATASET_PATH, game)
 
