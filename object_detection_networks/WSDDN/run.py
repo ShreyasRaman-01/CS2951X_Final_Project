@@ -7,13 +7,20 @@ from PIL import Image
 import hyperparameters as hp
 from wsddn import WeaklySupervisedDetection as WSDDN_Model, learning_rate_scheduler
 from preprocessing import preprocessing_factory
-
 from matplotlib import pyplot as plt
 
+#for progress bar with metrics update
+from keras.utils import generic_utils
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 PATH_TO_DATA = ''
+PATH_TO_WEIGHTS = ''
+
+#create the weights saving path if it doesn't exist
+if not os.path.isdir(os.path.join(PATH_TO_WEIGHTS,str(hp.experiment_number))):
+    os.makedirs(os.path.join(PATH_TO_WEIGHTS,str(hp.experiment_number)))
 
 #callbacks to log metrics and save weights at checkpoints
 # callback_list = [tf.keras.callbacks.TensorBoard(log_dir=logs_path,update_freq='batch',profile_batch=0),
@@ -192,11 +199,15 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
     #logging the loss over epochs
     total_loss_train = []
     total_loss_val = []
+    min_val_loss = float("inf")
 
     for epoch in range(hp.num_epochs):
 
         #record start time per epoch
         start_time = time.time()
+
+        progbar = generic_utils.Progbar(len(train_data[0]))
+        print('Epoch {}/{}'.format(epoch+1, hp.num_epochs))
 
         for batch_no, data_batch in enumerate(train_data):
 
@@ -213,6 +224,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
             total_loss_train.append(loss_value)
 
+            progbar.update(batch_no, [ ('loss', loss_value) ])
+
 
             #run model on validation dataset to get validation loss metrics
             if batch_no%hp.validation_batch_freq==0:
@@ -226,6 +239,14 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                 #running training for each image
                 loss_value = train_step(x_val, y_val, True)
 
+                #update the minimum loss reference + save the weights files
+                if loss_value < min_val_loss:
+
+                    print('Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, loss_value))
+
+                    min_val_loss = loss_value
+                    model.save_weights(  os.path.join( PATH_TO_WEIGHTS, str(hp.experiment_number), 'epoch_{}_loss{}.hdf5'.format(epoch, min_loss_value) )  )
+
 
                 total_loss_val.append(loss_value)
 
@@ -233,6 +254,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
     return total_loss_train, total_loss_val
 
 def visualize_losses(train_loss, val_loss):
+
+
     pass
 
 def test(model, test_data):
@@ -264,10 +287,8 @@ def main(ARGS):
         ARGS.data = os.path.abspath(ARGS.data)
 
     #extracting data to save the weight checkpoints and logs (for losses or energy function)
-    time_now = datetime.now()
-    timestamp = time_now.strftime("%m%d%y-%H%M%S")
-    checkpoint_path = os.path.join("checkpoints", timestamp)
-    logs_path = os.path.join("logs" , timestamp)
+    checkpoint_path = os.path.join("checkpoints", hp.experiment_number)
+    logs_path = os.path.join("logs" , hp.experiment_number)
 
     dataset = Dataset(ARGS.data)
 
@@ -283,6 +304,9 @@ def main(ARGS):
 
     if ARGS.task=='train' and not os.path.exists(checkpoint_path):
         os.makedirs(checkpoint_path)
+
+    if ARGS.task=='train' and not os.path.exists(logs_path):
+        os.makedirs(logs_path)
 
 
     #add custom metrics and losses to model

@@ -45,3 +45,6 @@ roi_pooling_ouput = [6,6]
 
 #compares the feature map discrepancies at fc7 for regions with IoU > threshold
 spatial_reg_iou_threshold = 0.6
+
+#for the sake of separating out graphical outputs + weights
+experiment_number = 1
