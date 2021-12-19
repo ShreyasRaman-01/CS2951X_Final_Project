@@ -164,8 +164,9 @@ class WeaklySupervisedDetection(tf.keras.Model):
         [objectness, original_rois, backbone_pre_pooling_output] = self.rpn_layer(backbone_pre_pooling_output)
 
 
-        original_rois = [original_rois[i] for i in range(len(objectness)) if objectness[i]>hp.objectness_threshold]
-
+        valid_objectness = tf.where(objectness>hp.objectness_threshold)
+        original_rois = tf.boolean_mask(original_rois, valid_objectness)
+        #indexes the original_rois using the valid_objectness ROIs
 
 
         '''Resizing the ROIs and pooling original proposals'''
