@@ -290,11 +290,6 @@ def main(ARGS):
         timestamp = os.path.basename(os.path.dirname(ARGS.load_checkpoint))
 
 
-    if os.path.exists(ARGS.data):
-        ARGS.data = os.path.abspath(ARGS.data)
-    else:
-        raise Exception('path to dataset {} is not valid or does not exist'.format(ARGS.data))
-
     #extracting data to save the weight checkpoints and logs (for losses or energy function)
     checkpoint_path = os.path.join("weights", hp.experiment_number)
     logs_path = os.path.join("logs" , hp.experiment_number)
