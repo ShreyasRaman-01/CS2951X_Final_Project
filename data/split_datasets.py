@@ -46,30 +46,30 @@ def main(ARGS):
 
         # pdb.set_trace()
 
-        game_path = os.path.join(game_path, image_size)
+        game_path_size = os.path.join(game_path, image_size)
 
         #create the training and testing folder paths if they are not already present
-        if not os.path.isdir(os.path.join(game_path, 'train')):
-            os.makedirs(os.path.join(game_path, 'train'))
+        if not os.path.isdir(os.path.join(game_path_size, 'train')):
+            os.makedirs(os.path.join(game_path_size, 'train'))
 
-        if not os.path.isdir(os.path.join(game_path, 'test')):
-            os.makedirs(os.path.join(game_path, 'test'))
+        if not os.path.isdir(os.path.join(game_path_size, 'test')):
+            os.makedirs(os.path.join(game_path_size, 'test'))
 
 
-        train_path = os.path.join(game_path, 'train')
-        test_path = os.path.join(game_path, 'test')
+        train_path = os.path.join(game_path_size, 'train')
+        test_path = os.path.join(game_path_size, 'test')
 
-        pdb.set_trace()
+        # pdb.set_trace()
 
-        for i, image in enumerate( os.listdir(game_path) ):
+        for i, image in enumerate( sorted(os.listdir(game_path_size)) ):
 
             #move into the test set
             if i in test_set_sample:
-                shutil.move( os.path.join(game_path, image), test_path )
+                shutil.move( os.path.join(game_path_size, image), test_path )
 
             #move into the train set
             else:
-                shutil.move( os.path.join(game_path, image), train_path )
+                shutil.move( os.path.join(game_path_size, image), train_path )
 
 
 
