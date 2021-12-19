@@ -59,9 +59,13 @@ def main(ARGS):
         train_path = os.path.join(game_path_size, 'train')
         test_path = os.path.join(game_path_size, 'test')
 
-        pdb.set_trace()
+        # pdb.set_trace()
 
         for i, image in enumerate( sorted(os.listdir(game_path_size)) ):
+
+            #skip the test images folder from being moved
+            if os.path.isdir(image):
+                continue
 
             #move into the test set
             if i in test_set_sample:
