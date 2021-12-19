@@ -82,7 +82,7 @@ class DatasetCreator:
         #iterating the training dataset + loading images
         for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game,'small', 'train'))):
 
-            batch_of_images.append([os.path.join(path_to_data, self.game, 'train', image), class_label])
+            batch_of_images.append([os.path.join(path_to_data, self.game, 'small', 'train', image), class_label])
 
             if (i+1)%hp.batch_size==0:
 
@@ -93,7 +93,7 @@ class DatasetCreator:
         #iterating the testing dataset + loading images
         for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game, 'small', 'test'))):
 
-            self.test_data.append([os.path.join(path_to_data, self.game, 'test', image), class_label])
+            self.test_data.append([os.path.join(path_to_data, self.game, 'small', 'test', image), class_label])
 
 
         self.train_data = np.array(self.train_data); self.test_data = np.array(self.test_data)
