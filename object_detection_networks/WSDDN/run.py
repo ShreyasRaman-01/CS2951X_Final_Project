@@ -77,7 +77,7 @@ class DatasetCreator:
         batch_of_images = []
 
         #iterating the training dataset + loading images
-        for i, image in enumerate(os.path.listdir(os.path.join(path_to_data, self.game,'small', 'train'))):
+        for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game,'small', 'train'))):
 
             batch_of_images.append([os.path.join(path_to_data, self.game, 'train', image), class_label])
 
@@ -88,7 +88,7 @@ class DatasetCreator:
 
 
         #iterating the testing dataset + loading images
-        for i, image in enumerate(os.path.listdir(os.path.join(path_to_data, self.game, 'small', 'test'))):
+        for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game, 'small', 'test'))):
 
             self.test_data.append(os.path.join(path_to_data, self.game, 'test', image), class_label)
 
@@ -210,7 +210,11 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #preprocessing the image for VGG network
             #image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
             #x_batch = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in data_batch])
-            x_batch = data_batch[:,0]
+
+            #shuffle the batch of images first (both images and labels)
+            np.random.shuffle(data_batch)
+
+            x_batch = [Image.open(x[0]) for x in data_batch]
 
             y_batch = data_batch[:,1]
 
@@ -229,6 +233,9 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                 #preprocessing the image for VGG network
                 # image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
                 #x_val = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in val_data])
+
+                #shuffle the validation dataset first (both images and labels)
+                np.random.shuffle(data_batch)
 
                 x_val = val_data[:,0]
 
