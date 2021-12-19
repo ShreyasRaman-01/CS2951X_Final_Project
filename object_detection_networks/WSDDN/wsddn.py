@@ -94,7 +94,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         for layer in self.backbone.layers[:-3]:
             layer.trainable = False
 
-        
+
 
         #main WSDDN model, post VGG16 backbone
         self.wsddn_layers = [
@@ -148,7 +148,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
 
-    def call(self, image, original_rois, labels, spatial_reg=False):
+    def call(self, image, labels, spatial_reg=False):
         '''Performs the forward pass of the WSDDN on input 'x' '''
 
 
