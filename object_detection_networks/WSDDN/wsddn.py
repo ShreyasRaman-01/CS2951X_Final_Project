@@ -166,7 +166,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         pdb.set_trace()
         valid_rois = tf.where(objectness>hp.objectness_threshold)
         #original_rois = tf.gather()
-        new_rois = original_rois.clone()
+        new_rois = tf.identity(original_rois)
         new_rois = new_rois.reshape((1, 6, 6, -1, 4))
         new_rois = new_rois[(objectness > hp.objectness_threshold)]
 
