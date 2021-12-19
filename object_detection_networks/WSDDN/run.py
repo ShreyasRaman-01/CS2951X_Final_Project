@@ -178,7 +178,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #iterate all images in each batch
             for image, label in zip(image_batch, label_batch):
 
-                image = [image]
+                image = np.expand_dims(image, axis=0)
+
                 pdb.set_trace()
 
                 output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
@@ -221,7 +222,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #shuffle the batch of images first (both images and labels)
             np.random.shuffle(data_batch)
 
-            x_batch = [Image.open(x[0]) for x in data_batch]
+            x_batch = [ np.asarray(Image.open(x[0])) for x in data_batch]
 
             y_batch = list(data_batch[:,1])
 
