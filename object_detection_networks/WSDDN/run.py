@@ -334,7 +334,7 @@ def main(ARGS):
         total_loss_train, total_loss_val = train(model, dataset.train_data, dataset.test_data, checkpoint_path, logs_path)
 
 
-    if ARGS.visualize:
+    if bool(ARGS.visualize):
         visualize_losses(total_loss_train, total_loss_val)
 
 
