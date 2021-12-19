@@ -93,7 +93,7 @@ class DatasetCreator:
         self.train_data = np.array(self.train_data); self.test_data = np.array(self.test_data)
 
 
-def parse_args():
+def parse_arguments():
     """ Perform command-line argument parsing. """
 
     parser = argparse.ArgumentParser(
@@ -331,6 +331,6 @@ def main(ARGS):
 
 if __name__=='__main__':
     #obtaining args input for training/testing
-    ARGS = parse_args()
+    ARGS = parse_arguments()
 
     main(ARGS)
