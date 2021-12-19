@@ -2,6 +2,7 @@ import os
 import argparse
 import random
 import shutil
+import pdb
 
 
 
@@ -43,6 +44,8 @@ def main(ARGS):
         if os.path.isfile(image_size):
             continue
 
+        pdb.set_trace()
+        
         game_path = os.path.join(game_path, image_size)
 
         #create the training and testing folder paths if they are not already present
