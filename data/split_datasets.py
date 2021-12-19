@@ -39,6 +39,10 @@ def main(ARGS):
 
     for image_size in os.listdir(game_path):
 
+        #skip the excel data on each experiment
+        if os.path.isfile(image_size):
+            continue
+
         game_path = os.path.join(game_path, image_size)
 
         #create the training and testing folder paths if they are not already present
