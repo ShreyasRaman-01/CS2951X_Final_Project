@@ -81,12 +81,12 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         #setup backbone architecture: pre-trained VGG network
         if backbone=='VGG16':
-            self.backbone = VGG16(weights = 'imagenet', include_top=False, pooling=None, input_shape = (120,120,3))
+            self.backbone = VGG16(weights = 'imagenet', include_top=False, pooling=None, input_shape = (200,200,3))
             self.preprocess = preprocess_input_16
             self.feat_map_scaling = 16
 
         elif backbone=='VGG19':
-            self.backbone = VGG19(weights = 'imagenet', include_top=False, pooling = None, input_shape = (120,120,3))
+            self.backbone = VGG19(weights = 'imagenet', include_top=False, pooling = None, input_shape = (200,200,3))
             self.preprocess = preprocess_input_19
             self.feat_map_scaling = 19
 
@@ -165,7 +165,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
         original_rois = [original_rois[i] for i in range(len(objectness)) if objectness[i]>hp.objectness_threshold]
-        
+
 
 
         '''Resizing the ROIs and pooling original proposals'''
