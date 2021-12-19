@@ -103,21 +103,21 @@ def parse_arguments():
     parser.add_argument(
         '--task',
         required = True,
-        choice = ['train','test'],
+        choices = ['train','test'],
         help = 'specify if running for testing or training'
     )
 
     parser.add_argument(
         '--backbone',
         required = True,
-        choice = ['VGG16','VGG19'],
+        choices = ['VGG16','VGG19'],
         help = 'specify if running with backbone of VGG16 or VGG19 for feature extraction'
     )
 
     parser.add_argument(
         '--atari_game',
         required = True,
-        choice = ['MsPacman-v0','BreakoutDeterministic-v4'],
+        choices = ['MsPacman-v0','BreakoutDeterministic-v4'],
         help = 'specify which game/environment on which WSDDN needs to run'
     )
 
@@ -143,7 +143,7 @@ def parse_arguments():
     parser.add_argument(
         '--visualize',
         required = True,
-        choice = [True, False],
+        choices = [True, False],
         help = 'specify if training losses (validation and train) have to be visualized + saved '
     )
 
