@@ -318,7 +318,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
             difference = other_score_fc7_output - highest_score_fc7_output
 
-            difference = tf.reshape(difference*tf.gather(scores[:,k], sorted_regions[1:]), (num_regions-1, 1))
+            difference = difference*tf.expand_dims(tf.gather(scores[:,k], sorted_regions[1:]),  axis=1)
 
             regularizer_sum += tf.sum(tf.pow(difference, 2))*0.5
 
