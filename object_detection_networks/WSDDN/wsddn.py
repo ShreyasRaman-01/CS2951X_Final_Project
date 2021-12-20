@@ -299,8 +299,8 @@ class WeaklySupervisedDetection(tf.keras.Model):
             highest_score_fc7_output = fc7[sorted_regions[0]]
 
             #access other regions and fc7 layer outputs (with non highest scores)
-            other_score_region = rois[sorted_regions[1:]]
-            other_score_fc7_output = fc7[sorted_regions[1:]]
+            other_score_region = tf.gather(rois,sorted_regions[1:])
+            other_score_fc7_output = tf.gather(fc7, sorted_regions[1:])
 
             #creating filter for bounding box regions with low IoU score
             region_ious = bounding_box_iou(other_score_region, highest_score_region.repeat(num_regions-1,1))
