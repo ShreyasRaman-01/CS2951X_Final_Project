@@ -172,7 +172,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         '''Resizing the ROIs and pooling original proposals'''
         backbone_pre_pooling_output = tf.squeeze(backbone_pre_pooling_output)
 
-        original_rois = tf.math.abs(tf.squeeze(original_rois))
+        original_rois = tf.math.abs(original_rois)
         #use absolute value to convert + remove negative region proposals
 
         original_rois = original_rois//self.feat_map_scaling
@@ -205,6 +205,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             if (x2-x1)<=0 or (y2-y1)<=0:
                 continue
 
+            pdb.set_trace()
 
             #filter out the ROI region from the feature map output
             roi_feature = backbone_pre_pooling_output[y1:y2, x1:x2, :]
@@ -224,7 +225,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             rois.append( (x1, x2, y1, y2) )
             filtered_origin_rois.append(original_rois[idx].numpy())
 
-
+        pdb.set_trace()
         #if no rois collected or if rois is empty list
         if not rois:
             return (None, None, None, None)
