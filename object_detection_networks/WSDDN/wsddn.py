@@ -334,12 +334,12 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         weight_squared_sum = 0
 
-        all_layers = self.backbone.layers + [self.fc6, self.fc7, self.fc8c, self.fc8d]
+        all_layers = self.backbone.layers + [self.fc6, self.fc7, self.fc7_5, self.fc8c, self.fc8d]
 
         #sum of all weights across all layers on the WSDDN model
         for layer in all_layers:
 
-            weight_squared_sum = tf.reduce_sum(tf.square(layer.get_weights()))
+            weight_squared_sum = tf.reduce_sum(tf.math.square(layer.get_weights()))
 
 
         return (hp.weight_decay/2)*weight_squared_sum
