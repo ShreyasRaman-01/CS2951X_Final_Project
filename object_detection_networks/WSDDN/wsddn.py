@@ -213,28 +213,13 @@ class WeaklySupervisedDetection(tf.keras.Model):
             if x2-x1<=0 or y2-y1<=0:
                 continue
 
-            pdb.set_trace()
-            #extracting the caresian product of coordinates of points on the feature map that contain the ROI
-            # x_range = tf.range(x1,x2,1)
-            # y_range = tf.range(y1,y2,1)
-            #
-            # tile_x = tf.tile(tf.expand_dims(x_range, 1), [1, tf.shape(y_range)[0]])
-            # tile_x = tf.expand_dims(tile_x, 2)
-            # tile_y = tf.tile(tf.expand_dims(y_range, 0), [tf.shape(x_range)[0], 1])
-            # tile_y = tf.expand_dims(tile_y, 2)
-            #
-            # roi_coords = tf.concat([tile_y, tile_x], axis=2)
-            #reshape the coordinates to (num_coords,2)
-            # roi_coords = tf.reshape(roi_coords, (-1, 2))
-
-
 
             pdb.set_trace()
 
             #filter out the ROI region from the feature map output
-            #roi_feature = tf.gather(backbone_pre_pooling_output, roi_coords)
+            height = y2-y1; width = x2-x1; channels = backbone_pre_pooling_output.shape[2]
 
-            roi_feature = backbone_pre_pooling_output[y1:y2, x1:x2, :]
+            roi_feature = tf.slice(backbone_pre_pooling_output, begin = tf.stack([y1,x1,0]), size = tf.stack([height, width, channels]) )
 
             '''replace with spatial pyramidal pooling (SPP) in wsddn_layers'''
             roi_feature = tf.image.resize(roi_feature, (hp.roi_pooling_output[0], hp.roi_pooling_output[1]))
