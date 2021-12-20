@@ -303,7 +303,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             other_score_fc7_output = tf.gather(fc7, sorted_regions[1:])
 
             #creating filter for bounding box regions with low IoU score
-            region_ious = bounding_box_iou(other_score_region, tf.repeat(highest_score_region,(num_regions-1,1)) )
+            region_ious = bounding_box_iou(other_score_region, tf.tile(tf.expand_dims(highest_score_region, axis=0),[num_regions-1,1]) )
             region_ious = tf.where(region_ious>hp.spatial_reg_iou_threshold)
 
             #mask out fc7 output for regions with < threshold IoU
