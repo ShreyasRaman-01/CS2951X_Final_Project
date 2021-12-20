@@ -38,7 +38,7 @@ spatial_reg_weight = 5e-4
 num_anchors = 9
 
 
-objectness_threshold = 0.7
+objectness_threshold = 0.5
 
 roi_pooling_output = [6,6]
 reshaped_size = (200,200)

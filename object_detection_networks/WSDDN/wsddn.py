@@ -285,7 +285,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         for k in range(hp.num_classes):
 
             #find the positive samples for each class: this does not apply for ATARI games as all imgaes have objects with labels
-            if label[k].item()==0:
+            if labels[k].item()==0:
                 continue
 
 

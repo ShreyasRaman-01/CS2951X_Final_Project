@@ -76,7 +76,7 @@ class DatasetCreator:
         '''
 
         #setting up the class label vector
-        class_label = [1 for _ in range(self.num_classes)] 
+        class_label = [1 for _ in range(self.num_classes)]
 
         batch_of_images = []
 
@@ -307,7 +307,7 @@ def main(ARGS):
 
     pdb.set_trace()
     #updating hyperparameters based on number of classes to find
-    hp.num_classes = ARGS.num_classes
+    hp.num_classes = int(ARGS.num_classes)
 
     if ARGS.load_weights is not None:
         ARGS.load_weights = os.path.abspath(ARGS.load_weights)
