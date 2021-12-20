@@ -339,13 +339,13 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #sum of all weights across all layers on the WSDDN model
         for layer in all_layers:
 
-            weight_squared_sum = tf.sum(tf.square(layer.get_weights()))
+            weight_squared_sum = tf.reduce_sum(tf.square(layer.get_weights()))
 
 
         return (hp.weight_decay/2)*weight_squared_sum
 
 
-    
+
     def energy_fn(probabilities):
         '''Energy function to optimize by the model for a single iamge'''
 
