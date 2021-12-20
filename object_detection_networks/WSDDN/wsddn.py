@@ -260,6 +260,8 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #add spatial regularization if needed
         spatial_regularizer_output = 0
 
+        pdb.set_trace()
+
         if spatial_reg:
             spatial_regularizer_output = self.spatial_regularizer(scores, labels, fc_output, tf.convert_to_tensor(rois))
 
