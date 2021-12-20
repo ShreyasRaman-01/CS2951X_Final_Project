@@ -339,6 +339,10 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #sum of all weights across all layers on the WSDDN model
         for layer in all_layers:
 
+            #skip layers with pretrained weights
+            if len(layer.get_weights())==0:
+                continue
+
             #extract the weights and biases for the fc layer
             (weights, biases) = layer.get_weights()
             weight_squared_sum = tf.reduce_sum(tf.math.square(weights)+tf.math.square(biases))
