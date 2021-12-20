@@ -271,7 +271,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
     @staticmethod
-    def spatial_regularizer(self, scores, labels, fc7, rois):
+    def spatial_regularizer(scores, labels, fc7, rois):
         '''Performs spatial regularization on the final scores + adds to the energy function optimization '''
 
         labels = tf.squeeze(labels)
