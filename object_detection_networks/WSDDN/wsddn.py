@@ -43,11 +43,11 @@ def bounding_box_iou(boxes1, boxes2):
     b2_x1 = boxes2[:,0]; b2_x2 = boxes2[:,1]; b2_y1 = boxes2[:,2]; b2_y2 = boxes2[:,3]
 
 
-    intersect_x1 = tf.reduce_max(tf.stack([b1_x1, b2_x1], axis=1))
-    intersect_y1 = tf.reduce_max(tf.stack([b1_y1, b2_y1], axis=1))
+    intersect_x1 = tf.reduce_max(tf.stack([b1_x1, b2_x1], axis=1), axis=1)
+    intersect_y1 = tf.reduce_max(tf.stack([b1_y1, b2_y1], axis=1), axis=1)
 
-    intersect_x2 = tf.reduce_min(tf.stack([b1_x2, b2_x2],axis=1))
-    intersect_y2 = tf.reduce_min(tf.stack([b1_y2, b2_y2],axis=1))
+    intersect_x2 = tf.reduce_min(tf.stack([b1_x2, b2_x2],axis=1), axis=1)
+    intersect_y2 = tf.reduce_min(tf.stack([b1_y2, b2_y2],axis=1), axis=1)
 
     #intersection area
     intersect_area = tf.clip_by_value(intersect_x2-intersect_x1+1, 0.0, float("inf"))*tf.clip_by_value(intersect_y2-intersect_y1+1, 0.0, float("inf"))
