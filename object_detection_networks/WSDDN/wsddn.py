@@ -327,7 +327,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
 
-    @staticmethod
+
     def l2_regularizer(self):
         '''Performs variation of L2 regularization i.e. (lambda/2) * ||w|| ^2'''
 
@@ -345,7 +345,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         return (hp.weight_decay/2)*weight_squared_sum
 
 
-    @staticmethod
+    
     def energy_fn(probabilities):
         '''Energy function to optimize by the model for a single iamge'''
 
