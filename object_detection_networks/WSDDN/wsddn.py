@@ -144,7 +144,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         x = Conv2D(512, (2, 2), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
 
         x_class = Conv2D(hp.num_anchors, (1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')(x)
-        x_regr = Conv2D(hp.num_anchors * 4, (1, 1), activation='linear', kernel_initializer='uniform', name='rpn_out_regress')(x)
+        x_regr = Conv2D(hp.num_anchors * 4, (1, 1), activation='linear', kernel_initializer='ones', name='rpn_out_regress')(x)
 
         return [x_class, x_regr, base_layers]
 
