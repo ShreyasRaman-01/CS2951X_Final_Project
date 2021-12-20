@@ -224,6 +224,8 @@ class WeaklySupervisedDetection(tf.keras.Model):
             tile_y = tf.expand_dims(tile_y, 2)
 
             roi_coords = tf.concat([tile_x, tile_y], axis=2)
+            #reshape the coordinates to (num_coords,2)
+            roi_coords = tf.reshape(roi_coords, (-1, 2))
 
             pdb.set_trace()
 
