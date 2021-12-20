@@ -158,7 +158,6 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
     def call(self, image, labels, spatial_reg=False):
         '''Performs the forward pass of the WSDDN on input 'x' '''
-        pdb.set_trace()
 
         '''VGG backbone and pooling: pre SPP or ROI pool'''
         #running input on the base pre-trained VGG16 or VGG19 model
@@ -227,7 +226,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             rois.append( tf.cast(roi, dtype=tf.int32) )
             filtered_origin_rois.append(tf.cast(original_rois[idx], dtype=tf.int32).numpy())
 
-        pdb.set_trace()
+
         #if no rois collected or if rois is empty list
         if not rois:
             return (None, None, None, None)
@@ -263,7 +262,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #add spatial regularization if needed
         spatial_regularizer_output = 0
 
-        pdb.set_trace()
+
 
         if spatial_reg:
             spatial_regularizer_output = self.spatial_regularizer(scores, labels, fc_output, tf.convert_to_tensor(rois))
@@ -308,7 +307,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             #creating filter for bounding box regions with low IoU score
             region_ious = bounding_box_iou(other_score_region, tf.tile(tf.expand_dims(highest_score_region, axis=0),[num_regions-1,1]) )
             region_ious = tf.cast(region_ious>hp.spatial_reg_iou_threshold, dtype=tf.float32)
-            pdb.set_trace()
+            
             #mask out fc7 output for regions with < threshold IoU
             fc7_output_mask = tf.tile(tf.expand_dims(region_ious,axis=1), (1,fc7.shape[1]))
             other_score_fc7_output = other_score_fc7_output*fc7_output_mask
