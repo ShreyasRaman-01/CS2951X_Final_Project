@@ -230,7 +230,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             pdb.set_trace()
 
             #filter out the ROI region from the feature map output
-            roi_feature = tf.gather(backbone_pre_pooling_output, roi_cords)
+            roi_feature = tf.gather(backbone_pre_pooling_output, roi_coords)
 
             '''replace with spatial pyramidal pooling (SPP) in wsddn_layers'''
             roi_feature = tf.image.resize(roi_feature, (hp.roi_pooling_output[0], hp.roi_pooling_output[1]))
