@@ -107,6 +107,9 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
             #batch normalization
             BatchNormalization(),
+
+            #flatten layer
+            Flatten(),
         ]
 
         #intermediate dense layers after extracting region-wise features (pooling layer)
@@ -206,6 +209,9 @@ class WeaklySupervisedDetection(tf.keras.Model):
             '''replace with spatial pyramidal pooling (SPP) in wsddn_layers'''
             roi_feature = tf.image.resize(roi_feature, (hp.roi_pooling_output[0], hp.roi_pooling_output[1]))
 
+            #convert the standard size ROIs to a vector
+            roi_feature = self.wsddn_layers[2](roi_feature)
+
             #extracting coordinates of the pooled ROIs
             if not rois:
                 rois_feature = tf.expand_dims(roi_feature, axis=0)
@@ -244,7 +250,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         #hadamard product (elementwise) across detection and classification outputs
         scores = tf.multiply(fc_class_out, fc_detect_out)
-        output = tf.sum(scores, axis=0) #summing scores for each class: across the regions
+        output = tf.reduce_sum(scores, axis=0) #summing scores for each class: across the regions
 
         #clipping outputs within 0-1 range
         output = tf.clip_by_value(output, 0.0, 1.0, name="clipping_scores")
