@@ -199,7 +199,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         for idx,roi in enumerate(original_rois):
 
             #extract ROI coordinates
-            (x1, x2, y1, y2) = roi
+            (x1, x2, y1, y2) = tf.cast(roi, dtype=tf.int32)
 
 
             if (x2-x1)<=0 or (y2-y1)<=0:
