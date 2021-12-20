@@ -291,7 +291,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
             #sort scores for the class 'k' across regions
             #note: scores of shape (num regions, num classes)
-            sorted_regions = tf.argsort(scores, axis=0)
+            sorted_regions = tf.argsort(scores[:,k])
 
 
             #access region and fc7 layer output with highest score
