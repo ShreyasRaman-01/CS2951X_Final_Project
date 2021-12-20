@@ -157,11 +157,9 @@ class WeaklySupervisedDetection(tf.keras.Model):
         '''VGG backbone and pooling: pre SPP or ROI pool'''
         #running input on the base pre-trained VGG16 or VGG19 model
         image = self.preprocess(image)
-        backbone_pre_pooling_output = tf.squeeze(self.backbone(image))
+        backbone_pre_pooling_output = self.backbone(image)
 
         # block5_pooling_output = MaxPool2D(2, name="block5_pool")(backbone_pre_pooling_output)
-
-
         '''Get the regions of interest (ROIs) using the RPN layer '''
         [objectness, original_rois, backbone_pre_pooling_output] = self.rpn_layer(backbone_pre_pooling_output)
 
@@ -172,6 +170,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
         '''Resizing the ROIs and pooling original proposals'''
+        backbone_pre_pooling_output = tf.squeeze(backbone_pre_pooling_output)
         original_rois = tf.squeeze(original_rois)
         original_rois = original_rois//self.feat_map_scaling
         #scaling the ROI coordinates to lower scale after preprcoessing + resizing image
