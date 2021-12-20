@@ -166,7 +166,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         [objectness, original_rois, backbone_pre_pooling_output] = self.rpn_layer(backbone_pre_pooling_output)
 
 
-        original_rois = tf.reshape(tf.identity(original_rois), (1, backbone_pre_pooling_output.shape[0], backbone_pre_pooling_output.shape[1], -1, 4))
+        original_rois = tf.reshape(tf.identity(original_rois), (1, backbone_pre_pooling_output.shape[1], backbone_pre_pooling_output.shape[2], -1, 4))
         original_rois = original_rois[(objectness > hp.objectness_threshold)]
         #indexes the original_rois using the valid_objectness ROIs
 
