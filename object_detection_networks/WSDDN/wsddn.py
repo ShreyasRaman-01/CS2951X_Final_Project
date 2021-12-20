@@ -217,7 +217,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             roi_feature = tf.gather(backbone_pre_pooling_output, roi)
 
             '''replace with spatial pyramidal pooling (SPP) in wsddn_layers'''
-            roi_feature = self.wsddn_layers[0](roi_feature)
+            roi_feature = tf.image.resize(roi_feature, (hp.roi_pooling_output[0], hp.roi_pooling_output[1]))
 
             #extracting coordinates of the pooled ROIs
             if not rois:
