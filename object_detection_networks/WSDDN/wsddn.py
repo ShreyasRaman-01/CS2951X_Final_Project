@@ -320,7 +320,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
             difference = difference*tf.expand_dims(tf.gather(scores[:,k], sorted_regions[1:]),  axis=1)
 
-            regularizer_sum += tf.sum(tf.pow(difference, 2))*0.5
+            regularizer_sum += tf.reduce_sum(tf.pow(difference, 2))*0.5
 
 
         return hp.spatial_reg_weight*(regularizer_sum/hp.num_classes)
