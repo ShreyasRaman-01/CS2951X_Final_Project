@@ -38,6 +38,9 @@ def learning_rate_scheduler(epoch):
 def bounding_box_iou(boxes1, boxes2):
     ''' Calculates IoU for pairs of bounding boxes from region proposals '''
 
+    boxes1 = tf.cast(boxes1, dtype=tf.float32)
+    boxes2 = tf.cast(boxes2, dtype=tf.float32)
+
     b1_x1 = boxes1[:,0]; b1_x2 = boxes1[:,1]; b1_y1 = boxes1[:,2]; b1_y2 = boxes1[:,3]
 
     b2_x1 = boxes2[:,0]; b2_x2 = boxes2[:,1]; b2_y1 = boxes2[:,2]; b2_y2 = boxes2[:,3]
