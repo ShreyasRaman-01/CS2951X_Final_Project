@@ -144,7 +144,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         x = Conv2D(512, (2, 2), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
 
         x_class = Conv2D(hp.num_anchors, (1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')(x)
-        x_regr = Conv2D(hp.num_anchors * 4, (1, 1), activation='sigmoid', kernel_initializer='glorot_uniform', name='rpn_out_regress')(x)
+        x_regr = Conv2D(hp.num_anchors * 4, (1, 1), activation='linear', kernel_initializer='glorot_uniform', name='rpn_out_regress')(x)
 
         return [x_class, x_regr, base_layers]
 
@@ -169,17 +169,13 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #indexes the original_rois using the valid_objectness ROIs
 
 
-
         '''Resizing the ROIs and pooling original proposals'''
         backbone_pre_pooling_output = tf.squeeze(backbone_pre_pooling_output)
 
-        original_rois = original[:,0]*(backbone_pre_pooling_output.shape[0])
-        original_rois = original[:,1]*(backbone_pre_pooling_output.shape[0])
-        original_rois = original[:,2]*(backbone_pre_pooling_output.shape[1])
-        original_rois = original[:,3]*(backbone_pre_pooling_output.shape[1])
+        original_rois = tf.math.abs(original_rois)
         #use absolute value to convert + remove negative region proposals
 
-        # original_rois = original_rois//self.feat_map_scaling
+        original_rois = original_rois//self.feat_map_scaling
         #scaling the ROI coordinates to lower scale after preprcoessing + resizing image
         #Note: original_rois shape (num rois, 4)
 
