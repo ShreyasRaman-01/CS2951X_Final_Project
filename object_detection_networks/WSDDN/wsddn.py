@@ -165,13 +165,9 @@ class WeaklySupervisedDetection(tf.keras.Model):
         '''Get the regions of interest (ROIs) using the RPN layer '''
         [objectness, original_rois, backbone_pre_pooling_output] = self.rpn_layer(backbone_pre_pooling_output)
 
-        pdb.set_trace()
-        valid_rois = tf.where(objectness>hp.objectness_threshold)
-        #original_rois = tf.gather()
-        new_rois = tf.reshape(tf.identity(original_rois), (1, 6, 6, -1, 4))
-        val_rois = tf.where(objectness > hp.objectness_threshold)
-        new_rois = new_rois[(objectness > hp.objectness_threshold)]
 
+        original_rois = tf.reshape(tf.identity(original_rois), (1, backbone_pre_pooling_output.shape[0], backbone_pre_pooling_output.shape[1], -1, 4))
+        original_rois = original_rois[(objectness > hp.objectness_threshold)]
         #indexes the original_rois using the valid_objectness ROIs
 
 
@@ -179,9 +175,24 @@ class WeaklySupervisedDetection(tf.keras.Model):
         original_rois = tf.squeeze(original_rois)
         original_rois = original_rois//self.feat_map_scaling
         #scaling the ROI coordinates to lower scale after preprcoessing + resizing image
+        #Note: original_rois shape (num rois, 4)
 
         rois = []
         filtered_origin_rois = []
+
+        # #eliminate proposed ROIs where the ROIs are invalid i.e. x2 < x1 or y2 < y1: filtering original_rois based on where the anchor positions were valid
+        # original_rois = original_rois[ (       (original_rois[:,1] - original_rois[:,0]>0) and (original_rois[:,3] - original_rois[:,2] > 0)     )  ]
+        #
+        # #extract out the relevent regions of prepooling feature map
+        # roi_features =
+        # roi_features = self.wsddn_layers[0](roi_features)
+        #
+        # if not rois:
+        #     rois_feature = tf.expand_dims(roi_feature, axis=0)
+        #
+        # else:
+        #     rois_feature = tf.concat( (rois_feature, tf.expand_dims(roi_feature,axis=0)) )
+
 
         for idx,roi in enumerate(original_rois):
 
@@ -196,7 +207,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             roi_feature = backbone_pre_pooling_output[: , y1:y2, x1:x2]
 
             '''replace with spatial pyramidal pooling (SPP) in wsddn_layers'''
-            roi_feature = wsddn_layers[0](roi_feature)
+            roi_feature = self.wsddn_layers[0](roi_feature)
 
             #extracting coordinates of the pooled ROIs
             if not rois:
@@ -213,7 +224,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         #if no rois collected or if rois is empty list
         if not rois:
-            return False
+            return (None, None, None, None)
 
 
         filtered_origin_rois = tf.convert_to_tensor(filtered_origin_rois)
