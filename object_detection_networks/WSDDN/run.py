@@ -254,18 +254,18 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
 
             #run model on validation dataset to get validation loss metrics
-            if batch_no%hp.validation_batch_freq==0:
+            if (batch_no)%hp.validation_batch_freq==0:
 
                 #preprocessing the image for VGG network
                 # image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
                 #x_val = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in val_data])
 
                 #shuffle the validation dataset first (both images and labels)
-                np.random.shuffle(data_batch)
+                np.random.shuffle(val_data)
 
-                x_val = val_data[:,0]
+                x_val = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_size)) for x in val_data]
 
-                y_val = val_data[:,1]
+                y_val = list(val_data[:,1])
 
                 #running training for each image
                 val_loss = train_step(x_val, y_val, True)
