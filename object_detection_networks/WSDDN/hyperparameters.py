@@ -40,7 +40,7 @@ num_anchors = 9
 
 objectness_threshold = 0.7
 
-roi_pooling_ouput = [6,6]
+roi_pooling_output = [6,6]
 reshaped_size = (200,200)
 
 

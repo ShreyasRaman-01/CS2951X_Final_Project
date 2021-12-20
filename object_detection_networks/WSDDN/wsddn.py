@@ -207,7 +207,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             #extract ROI coordinates
             roi = tf.cast(roi, dtype=tf.int32)
 
-
+            #roi in the form (x1,x2,y1,y2)
             if roi[1]-roi[0]<=0 or roi[3]-roi[2]<=0:
                 continue
 
