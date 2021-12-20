@@ -40,7 +40,7 @@ if not os.path.isdir(os.path.join(PATH_TO_WEIGHTS,str(hp.experiment_number))):
 
 class DatasetCreator:
 
-    def __init__(self, atari_game):
+    def __init__(self, atari_game, image_size):
 
         #lists storing training and testing data in the format: [ batch of image filepaths, batch of class labels ]
         self.test_data = []
@@ -60,6 +60,9 @@ class DatasetCreator:
 
         #save the game name for the dataset path
         self.game = atari_game
+
+        #store the input image render size
+        self.size = image_size
 
 
     def create_datasets(self, path_to_data):
@@ -81,9 +84,9 @@ class DatasetCreator:
         batch_of_images = []
 
         #iterating the training dataset + loading images
-        for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game,'small', 'train'))):
+        for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game,self.size, 'train'))):
 
-            batch_of_images.append([os.path.join(path_to_data, self.game, 'small', 'train', image), class_label])
+            batch_of_images.append([os.path.join(path_to_data, self.game, self.size, 'train', image), class_label])
 
             if (i+1)%hp.batch_size==0:
 
@@ -92,9 +95,9 @@ class DatasetCreator:
 
 
         #iterating the testing dataset + loading images
-        for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game, 'small', 'test'))):
+        for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game, self.size, 'test'))):
 
-            self.test_data.append([os.path.join(path_to_data, self.game, 'small', 'test', image), class_label])
+            self.test_data.append([os.path.join(path_to_data, self.game, self.size, 'test', image), class_label])
 
 
         self.train_data = np.array(self.train_data); self.test_data = np.array(self.test_data)
@@ -139,6 +142,13 @@ def parse_arguments():
         '--num_classes',
         required=True,
         help = 'setting up required classes'
+    ),
+
+    parser.add_argument(
+        '--image_size',
+        required=True,
+        choices = ['small','large'],
+        help = 'select the size of the image to use when training'
     )
 
     parser.add_argument(
@@ -181,7 +191,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
                 image = tf.expand_dims(image, axis=0)
 
-                pdb.set_trace()
+
 
                 output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
 
@@ -189,10 +199,10 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                 #if no ROIs or regions found, skip to the next image to train on
                 if (output, scores, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None):
                     continue
-                pdb.set_trace()
+
                 loss_value = loss_value + model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(label, tf.float32)) + model.l2_regularizer() + spatial_regularizer_output
 
-
+        pdb.set_trace()
         loss_value = loss_value/len(image_batch) #loss averaged over batch
         grads = tape.gradient(loss_value, model.trainable_weights)
 
@@ -305,9 +315,10 @@ def test(model, test_data):
 def main(ARGS):
     '''Main function parsing input and executing data preprocessing, training + testing'''
 
-    pdb.set_trace()
+
     #updating hyperparameters based on number of classes to find
     hp.num_classes = int(ARGS.num_classes)
+
 
     if ARGS.load_weights is not None:
         ARGS.load_weights = os.path.abspath(ARGS.load_weights)
@@ -345,10 +356,10 @@ def main(ARGS):
 
 
     #collect the dataset into a dictionary list
-    data_generator = DatasetCreator(ARGS.atari_game)
+    data_generator = DatasetCreator(ARGS.atari_game, ARGS.image_size)
     data_generator.create_datasets(PATH_TO_DATA)
 
-    pdb.set_trace()
+
 
     #training or testing the WSDDN model
     if ARGS.task=='test':
