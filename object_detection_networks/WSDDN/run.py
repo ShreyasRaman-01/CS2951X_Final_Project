@@ -189,7 +189,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                 #if no ROIs or regions found, skip to the next image to train on
                 if (output, scores, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None):
                     continue
-
+                pdb.set_trace()
                 loss_value = loss_value + model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(label, tf.float32)) + model.l2_regularizer() + spatial_regularizer_output
 
 
