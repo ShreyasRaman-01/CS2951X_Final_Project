@@ -209,8 +209,8 @@ class WeaklySupervisedDetection(tf.keras.Model):
             '''replace with spatial pyramidal pooling (SPP) in wsddn_layers'''
             roi_feature = tf.image.resize(roi_feature, (hp.roi_pooling_output[0], hp.roi_pooling_output[1]))
 
-            #convert the standard size ROIs to a vector of values, accumulate and pass into dense layers
-            roi_feature = self.wsddn_layers[2](roi_feature)
+            #convert the standard size ROIs to a flat vector of values, accumulate and pass into dense layers
+            roi_feature = tf.reshape(roi_feature, -1)
 
             #extracting coordinates of the pooled ROIs
             if not rois:
