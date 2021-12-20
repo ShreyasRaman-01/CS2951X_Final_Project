@@ -180,26 +180,10 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         original_rois = tf.stack([x1,x2,y1,y2], axis=1)
         #use absolute value to convert + remove negative region proposals
-
-        # original_rois = original_rois//self.feat_map_scaling
-        #scaling the ROI coordinates to lower scale after preprcoessing + resizing image
         #Note: original_rois shape (num rois, 4)
 
         rois = []
         filtered_origin_rois = []
-
-        # #eliminate proposed ROIs where the ROIs are invalid i.e. x2 < x1 or y2 < y1: filtering original_rois based on where the anchor positions were valid
-        # original_rois = original_rois[ (       (original_rois[:,1] - original_rois[:,0]>0) and (original_rois[:,3] - original_rois[:,2] > 0)     )  ]
-        #
-        # #extract out the relevent regions of prepooling feature map
-        # roi_features =
-        # roi_features = self.wsddn_layers[0](roi_features)
-        #
-        # if not rois:
-        #     rois_feature = tf.expand_dims(roi_feature, axis=0)
-        #
-        # else:
-        #     rois_feature = tf.concat( (rois_feature, tf.expand_dims(roi_feature,axis=0)) )
 
 
         for idx,roi in enumerate(original_rois):
@@ -213,8 +197,6 @@ class WeaklySupervisedDetection(tf.keras.Model):
             if x2-x1<=0 or y2-y1<=0:
                 continue
 
-
-            pdb.set_trace()
 
             #filter out the ROI region from the feature map output
             height = y2-y1; width = x2-x1; channels = backbone_pre_pooling_output.shape[2]
@@ -233,7 +215,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
             # accumulate a list of ROI coordinates
-            rois.append( roi )
+            rois.append( tf.cast(roi, dtype=tf.int32) )
             filtered_origin_rois.append(tf.cast(original_rois[idx], dtype=tf.int32).numpy())
 
         pdb.set_trace()
