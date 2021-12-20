@@ -115,7 +115,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #intermediate dense layers after extracting region-wise features (pooling layer)
         self.fc6 = Dense(9216, activation='relu', name="block6_fc")
         self.fc7 = Dense(4096, activation = 'relu', name="block7_fc")
-
+        self.fc7_5 = Dense(2048, activation='relu', name="block7.5_fc")
 
 
         #classification branch layers: performed on individual regions
@@ -237,6 +237,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #after getting features from pooling, run the fully connected layers + perform softmax
         fc_output = self.fc6(rois_feature)
         fc_output = self.fc7(fc_output)
+        fc_output = self.fc7_5(fc_output)
 
         #classification branch + softmax: output num_regions * num classes
         fc_class_out = self.fc8c(fc_output)

@@ -76,7 +76,7 @@ class DatasetCreator:
         '''
 
         #setting up the class label vector
-        class_label = [1 for _ in range(self.num_classes)]
+        class_label = [1 for _ in range(self.num_classes)] 
 
         batch_of_images = []
 
