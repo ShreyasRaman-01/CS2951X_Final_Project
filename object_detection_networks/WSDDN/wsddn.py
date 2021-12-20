@@ -157,9 +157,9 @@ class WeaklySupervisedDetection(tf.keras.Model):
         '''VGG backbone and pooling: pre SPP or ROI pool'''
         #running input on the base pre-trained VGG16 or VGG19 model
         image = self.preprocess(image)
-        backbone_pre_pooling_output = self.backbone(image)
+        backbone_pre_pooling_output = tf.squeeze(self.backbone(image))
 
-        block5_pooling_output = MaxPool2D(2, name="block5_pool")(backbone_pre_pooling_output)
+        # block5_pooling_output = MaxPool2D(2, name="block5_pool")(backbone_pre_pooling_output)
 
 
         '''Get the regions of interest (ROIs) using the RPN layer '''
@@ -199,12 +199,13 @@ class WeaklySupervisedDetection(tf.keras.Model):
             #extract ROI coordinates
             (x1, x2, y1, y2) = roi
 
+
             if (x2-x1)<=0 or (y2-y1)<=0:
                 continue
 
 
             #filter out the ROI region from the feature map output
-            roi_feature = backbone_pre_pooling_output[: , y1:y2, x1:x2]
+            roi_feature = backbone_pre_pooling_output[y1:y2, x1:x2, :]
 
             '''replace with spatial pyramidal pooling (SPP) in wsddn_layers'''
             roi_feature = self.wsddn_layers[0](roi_feature)
