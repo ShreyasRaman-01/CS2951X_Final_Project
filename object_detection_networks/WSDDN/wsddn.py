@@ -224,12 +224,12 @@ class WeaklySupervisedDetection(tf.keras.Model):
                 rois_feature = tf.expand_dims(roi_feature, axis=0)
 
             else:
-                rois_feature = tf.concat( (rois_feature, tf.expand_dims(roi_feature,axis=0)) )
+                rois_feature = tf.concat( (rois_feature, tf.expand_dims(roi_feature,axis=0)), axis=0 )
 
 
             # accumulate a list of ROI coordinates
             rois.append( roi )
-            filtered_origin_rois.append(original_rois[idx].numpy())
+            filtered_origin_rois.append(tf.cast(original_rois[idx], dtype=tf.int32).numpy())
 
         pdb.set_trace()
         #if no rois collected or if rois is empty list
