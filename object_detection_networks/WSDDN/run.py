@@ -512,9 +512,11 @@ def main_eval(ARGS):
     if ARGS.task=='train':
         raise Exception('cannot run the evaluation script when the \'train\' argument is present ')
 
+    
 
     #create WSDDN model instance + pass in backbone architecture to use e.g. VGG16 or VGG19
     model = WSDDN_Model(ARGS.backbone)
+    model.compile()
 
     if ARGS.load_weights is not None:
         if ARGS.backbone=='VGG16':
