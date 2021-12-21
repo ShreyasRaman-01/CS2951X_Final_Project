@@ -412,7 +412,7 @@ def visualize_predictions(model,logs_path, test_data):
         output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(sample, None, False)
 
 
-        filtered_origin_rois = (filtered_origin_rois*model.feat_map_scaling).numpy()
+        filtered_origin_rois = (filtered_origin_rois*int(1/model.feat_map_scaling)).numpy()
 
         #first plot the sample image, then plot the rois on top
         plt.imshow(tf.squeeze(sample).numpy())

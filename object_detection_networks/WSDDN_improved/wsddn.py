@@ -165,6 +165,8 @@ class WeaklySupervisedDetection(tf.keras.Model):
         image = self.preprocess(image)
         backbone_pre_pooling_output = self.backbone(image)
 
+        self.feat_map_scaling = float(backbone_pre_pooling_output.shape[1]/image.shape[1])
+
         # block5_pooling_output = MaxPool2D(2, name="block5_pool")(backbone_pre_pooling_output)
         '''Get the regions of interest (ROIs) using the RPN layer '''
         [objectness, original_rois, backbone_pre_pooling_output] = self.rpn_layer(backbone_pre_pooling_output)
@@ -292,7 +294,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
     def difference_loss(self, fc_detect_out, rois_feature):
         '''Uses a distance metric to find the pairwise distance between regions in different classes'''
 
-        
+
 
     def similarity_loss(self, fc_detect_out, rois_feature):
         '''Uses a distance metric to find the pair-wise distances between regions predicted to be in the same class'''
