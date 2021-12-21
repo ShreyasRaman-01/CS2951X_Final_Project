@@ -52,3 +52,6 @@ experiment_number = 1
 
 #weights for triplet loss per class
 triplet_soft_margin = 1e-5
+
+triplet_loss_weight = 1e-4
+similarity_loss_weight = 1e-5

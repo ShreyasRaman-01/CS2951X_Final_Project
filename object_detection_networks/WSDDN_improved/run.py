@@ -234,6 +234,9 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
     similarity_loss_train = []
     triplet_loss_train = []
     total_loss_val = []
+    similarity_loss_val = []
+    triplet_loss_val = []
+
     min_val_loss = float("inf")
 
     for epoch in range(hp.num_epochs):
@@ -288,12 +291,17 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                     y_val = list(val_data_batch[:,1])
 
                     #running training for each image
-                    val_loss, val_num_regions  = train_step(x_val, y_val, True)
-                    val_loss = val_loss.numpy()
+                    val_loss, val_similarity_loss, val_triplet_loss, val_num_regions  = train_step(x_val, y_val, True)
 
-                    print('val_loss: ', val_loss, ' | val_regions: ', val_num_regions)
+                    val_loss = val_loss.numpy()
+                    val_similarity_loss = val_similarity_loss.numpy()
+                    val_triplet_loss = val_triplet_loss.numpy()
+
+                    print('val_loss: ', val_loss, ' | val_similarity_loss: ', val_similarity_loss, ' | val_triplet_loss: ', val_triplet_loss, ' | val_regions: ', val_num_regions)
 
                     total_loss_val.append(val_loss)
+                    similarity_loss_val.append(val_similarity_loss)
+                    triplet_loss_val.append(val_triplet_loss)
 
                     #update the minimum loss reference + save the weights files
                     if val_loss < min_val_loss:
