@@ -4,15 +4,15 @@ All hyperparameters to the WSDDN model
 '''
 
 #number of epochs to run training
-num_epochs = 10
+num_epochs = 6
 
 #frequency of batches with which to record validation results
 validation_batch_freq = 10
 
 #learning rate for the 1st half of the epochs
-learning_rate_1 = 10e-5
+learning_rate_1 = 1e-4
 #learning rate for the 2nd half of the epochs
-learning_rate_2 = 10e-6
+learning_rate_2 = 1e-5
 
 
 momentum = 0.01
@@ -48,4 +48,4 @@ reshaped_size = (200,200)
 spatial_reg_iou_threshold = 0.7
 
 #for the sake of separating out graphical outputs + weights
-experiment_number = 1
+experiment_number = 2

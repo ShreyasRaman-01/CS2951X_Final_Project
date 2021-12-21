@@ -254,18 +254,21 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             y_batch = list(data_batch[:,1])
 
             #running training for each image
-            loss_value = train_step(x_batch, y_batch, True)
+            train_loss = train_step(x_batch, y_batch, True)
+            pdb.set_trace()
 
 
-            total_loss_train.append(loss_value)
+            total_loss_train.append(train_loss)
 
             #update progress bar on each batch
-            progbar.update(batch_no+1, [ ('loss', loss_value) ])
+            progbar.update(batch_no+1, [ ('train_loss', loss_value) ])
 
 
 
             #run model on validation dataset to get validation loss metrics
             if (batch_no+1)%hp.validation_batch_freq==0:
+
+                print('Running validation set...')
 
                 for __, val_data_batch in enumerate(val_data):
 
@@ -280,6 +283,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                     #running training for each image
                     val_loss = train_step(x_val, y_val, True)
 
+                    print('val_loss: ', val_loss)
+
                     #update the minimum loss reference + save the weights files
                     if val_loss < min_val_loss:
 
@@ -289,7 +294,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                         model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
 
 
-                    total_loss_val.append(loss_value)
+                    total_loss_val.append(val_loss)
 
 
         end_time = time.time()
@@ -298,28 +303,65 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         print('Validation Loss: ', val_loss)
         print('Elapsed Time: ', end_time-start_time)
 
+        print('Saving logs....')
+        #saving log of all losses (training and validation)
+        metric_dict = {'train_loss':total_loss_train}
+        dataframe = pd.DataFrame(metric_dict)
+        dataframe.to_csv(os.path.join(logs_path, 'train_loss_data.csv'))
+
+        metric_dict = {'val_loss':total_loss_val}
+        dataframe = pd.DataFrame(metric_dict)
+        dataframe.to_csv(os.path.join(logs_path, 'val_loss_data.csv'))
+
+        print('Saved logs!')
+
 
 
     #log and graph the losses using the log_path argument
-    plt.plot( range(hp.num_epochs*len(train_data[0])), total_loss_train )
+    plt.plot( range(len(total_loss_train)), total_loss_train )
+    plt.title('Training loss by batch')
+    plt.xlabel('batch number')
+    plt.ylabel('training loss')
     plt.savefig( os.path.join(logs_path, 'train_loss.png') )
 
-    plt.plot( range( hp.num_epochs*( len(train_data[0])//hp.validation_batch_freq )  )  , total_loss_val )
+    plt.plot( range(len(total_loss_val))  )  , total_loss_val )
+    plt.title('Validation loss by batch')
+    plt.xlabel('batch number')
+    plt.ylabel('testing loss')
     plt.savefig( os.path.join(logs_path, 'val_loss.png') )
 
-    #saving log of all losses (training and validation)
-    logged_train_loss = total_loss_train[0:len(total_loss_train):hp.validation_batch_freq]
-    metric_dict = {'train_loss':logged_train_loss, 'val_loss':total_loss_val}
-    dataframe = pd.DataFrame(metric_dict)
-    dataframe.to_csv(os.path.join(logs_path, 'loss_data.csv'))
+    plot_loss_train = total_loss_train[0:len(total_loss_train):hp.validation_batch_freq]
+
+    plt.plot(range(len(plot_loss_train)), plot_loss_train, label = 'training')
+    plt.plot(range(len(plot_loss_val)), plot_loss_val, label = 'validation' )
+    plt.title('Training & Validation loss by batch')
+    plt.xlabel('batch number')
+    plt.ylabel('training/validation loss')
+    plt.savefig( os.path.join(logs_path, 'train_val_loss.png') )
 
 
     return total_loss_train, total_loss_val
 
-def visualize_losses(train_loss, val_loss):
+def visualize_losses(train_loss, val_loss, logs_path):
+
+    print('Plotting loss figures....')
+
+    #log and graph the losses using the log_path argument
+    plt.plot( len(train_loss), train_loss )
+    plt.title('Training loss by batch')
+    plt.xlabel('batch number')
+    plt.ylabel('training loss')
+    plt.savefig( os.path.join(logs_path, 'train_loss.png') )
+
+    plt.plot(  len(val_loss)  , val_loss )
+    plt.title('Validation loss by batch')
+    plt.xlabel('batch number')
+    plt.ylabel('testing loss')
+    plt.savefig( os.path.join(logs_path, 'val_loss.png') )
+
+    print('Finished plotting losses!')
 
 
-    pass
 
 def test(model, test_data):
     '''Runs the main testing loop for the WSDDN'''
