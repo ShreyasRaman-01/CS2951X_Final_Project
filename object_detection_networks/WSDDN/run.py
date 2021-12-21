@@ -167,6 +167,11 @@ def parse_arguments():
         help = 'specify if training losses (validation and train) have to be visualized + saved '
     )
 
+    parser.add_argument(
+        '--test_sample',
+        help = 'test model on inference mode on a sample of test images'
+    )
+
     return parser.parse_args()
 
 def drawBoxes(boxes):
@@ -495,15 +500,15 @@ def main(ARGS):
 
 def main_eval(ARGS):
 
-    #updating hyperparameters based on number of classes to find
-    hp.num_classes = int(ARGS.num_classes)
-
-    #extracting data to save the weight checkpoints and logs (for losses or energy function)
-    logs_path = os.path.join("logs" , str(hp.experiment_number) )
-
-    visualize_losses(logs_path)
-
-
+    # #updating hyperparameters based on number of classes to find
+    # hp.num_classes = int(ARGS.num_classes)
+    #
+    # #extracting data to save the weight checkpoints and logs (for losses or energy function)
+    # logs_path = os.path.join("logs" , str(hp.experiment_number) )
+    #
+    # visualize_losses(logs_path)
+    #
+    #
     if ARGS.task=='train':
         raise Exception('cannot run the evaluation script when the \'train\' argument is present ')
 
