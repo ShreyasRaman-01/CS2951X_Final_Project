@@ -96,6 +96,9 @@ class DatasetCreator:
                 batch_of_images = []
 
 
+
+        batch_of_images = []
+
         #iterating the testing dataset + loading images
         for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game, self.size, 'test'))):
 
@@ -245,6 +248,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             np.random.shuffle(data_batch)
 
             x_batch = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_size)) for x in data_batch]
+            pdb.set_trace()
 
             y_batch = list(data_batch[:,1])
 
