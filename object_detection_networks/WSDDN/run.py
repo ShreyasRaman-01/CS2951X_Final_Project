@@ -357,20 +357,20 @@ def visualize_losses(logs_path):
     print('Plotting loss figures....')
 
     #log and graph the losses using the log_path argument
-    plt.plot( len(train_loss), train_loss )
+    plt.plot( range(len(train_loss)), train_loss )
     plt.title('Training loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('training loss')
     plt.savefig( os.path.join(logs_path, 'train_loss.png') )
 
-    plt.plot(  len(val_loss)  , val_loss )
+    plt.plot(  range(len(val_loss))  , val_loss )
     plt.title('Validation loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('testing loss')
     plt.savefig( os.path.join(logs_path, 'val_loss.png') )
 
     plot_train_loss = train_loss[0:len(train_loss):hp.validation_batch_freq]
-    plt.plot( len(plot_train_loss), plot_train_loss)
+    plt.plot( range(len(plot_train_loss)), plot_train_loss)
     plt.title('Training & Validation loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('train/test loss')
