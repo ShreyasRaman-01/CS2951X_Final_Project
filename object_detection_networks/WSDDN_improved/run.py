@@ -201,11 +201,10 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #iterate all images in each batch
             for image, label in zip(image_batch, label_batch):
 
-                image = tf.expand_dims(image,label, axis=0)
+                image = tf.expand_dims(image, axis=0)
 
 
-
-                output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output = model.call(image, spatial_reg)
+                output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
 
 
                 #if no ROIs or regions found, skip to the next image to train on
