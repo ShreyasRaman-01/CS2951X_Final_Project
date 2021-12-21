@@ -212,7 +212,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                     continue
 
                 loss_value = loss_value + hp.cross_entropy_loss_weight*model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(label, tf.float32)) + similarity_loss + triplet_loss + model.l2_regularizer() + spatial_regularizer_output
-                
+
 
             loss_value = loss_value/len(image_batch) #loss averaged over batch
 
@@ -308,7 +308,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                         print('\nMin. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
 
                         min_val_loss = val_loss
-                        model.save_model(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.h5'.format(epoch, val_loss) )  )
+                        model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
 
 
         end_time = time.time()
