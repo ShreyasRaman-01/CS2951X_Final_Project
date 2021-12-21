@@ -394,6 +394,7 @@ def visualize_losses(logs_path):
 def visualize_predictions(model,logs_path, test_data):
 
     print('Visualizing predictions on test samples...')
+    pdb.set_trace()
 
     test_sample = np.random.choice(test_data, size=3)
 
@@ -507,7 +508,7 @@ def main_eval(ARGS):
     # logs_path = os.path.join("logs" , str(hp.experiment_number) )
     #
     # visualize_losses(logs_path)
-    
+
     if ARGS.task=='train':
         raise Exception('cannot run the evaluation script when the \'train\' argument is present ')
 
