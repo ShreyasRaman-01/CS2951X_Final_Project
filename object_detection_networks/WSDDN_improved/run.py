@@ -203,7 +203,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
                 image = tf.expand_dims(image, axis=0)
 
-
+                pdb.set_trace()
                 output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
 
 
@@ -320,11 +320,11 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
         print('Saving logs....')
         #saving log of all losses (training and validation)
-        metric_dict = {'train_loss':total_loss_train}
+        metric_dict = {'train_loss':total_loss_train, 'train_similarity_loss':similarity_loss_train, 'train_triplet_loss':triplet_loss_train}
         dataframe = pd.DataFrame(metric_dict)
         dataframe.to_csv(os.path.join(logs_path, 'train_loss_data.csv'))
 
-        metric_dict = {'val_loss':total_loss_val}
+        metric_dict = {'val_loss':total_loss_val, 'val_similarity_loss':similarity_loss_val, 'val_triplet_loss':triplet_loss_val}
         dataframe = pd.DataFrame(metric_dict)
         dataframe.to_csv(os.path.join(logs_path, 'val_loss_data.csv'))
 
