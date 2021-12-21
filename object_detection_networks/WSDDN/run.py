@@ -170,11 +170,13 @@ def parse_arguments():
     return parser.parse_args()
 
 def drawBoxes(boxes):
+
     for (x, y, w, h) in boxes:
-        plt.hlines(y, x, x + w)
-        plt.hlines(y + h, x, x + w)
-        plt.vlines(x, y, y + h)
-        plt.vlines(x + w, y, y + h)
+        random_color = np.random.randint(0,255,size=(3,))
+        plt.hlines(y, x, x + w, colors= random_color)
+        plt.hlines(y + h, x, x + w, colors= random_color)
+        plt.vlines(x, y, y + h, colors= random_color)
+        plt.vlines(x + w, y, y + h, colors= random_color)
 
 
 
@@ -373,6 +375,46 @@ def visualize_losses(logs_path):
 
     print('Finished plotting losses!')
 
+def visualize_predictions(model,logs_path, test_data):
+
+    print('Visualizing predictions on test samples...')
+
+    test_sample = np.random.choice(test_data, size=3)
+
+    #convert paths to images
+    test_sample = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_image_size)) for x in test_sample]
+
+    #run the model on inference mode for each sample: without spatial regularization where label is not necessary
+    for i,sample in enumerate(test_sample):
+
+        output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(sample[0], None, False)
+
+
+        filtered_origin_rois = (filtered_origin_rois*model.feat_map_scaling).numpy()
+
+        #first plot the sample image, then plot the rois on top
+        plt.imread(sample)
+
+        reformatted_rois = []
+
+        for roi in filtered_origin_rois:
+
+            #convert the roi to the (x, y, w, h) format
+            (x1, x2, y1, y2) = roi
+
+            reformatted_rois.append(  (x1, y1, x2-x1+1, y2-y1+1)  )
+
+
+        #draw the bounding boxes onto the figure
+        drawBoxes(reformatted_rois)
+
+        image_path = os.path.join(logs_path, 'sample_image_{}.png'.format(str(i)))
+        plt.savefig(image_path)
+        print('Saved image {}'.format(str(i)))
+
+    print('Finished processing all sample images!')
+
+
 
 
 def test(model, test_data):
@@ -450,8 +492,36 @@ def main_eval(ARGS):
 
     visualize_losses(logs_path)
 
+
+    if ARGS.task=='train':
+        raise Exception('cannot run the evaluation script when the \'train\' argument is present ')
+
+
+    #create WSDDN model instance + pass in backbone architecture to use e.g. VGG16 or VGG19
+    model = WSDDN_Model(ARGS.backbone)
+
+    if ARGS.load_weights is not None:
+        if ARGS.backbone=='VGG16':
+            model.load_weights(ARGS.load_weights, by_name = True)
+        elif ARGS.backbone=='VGG19':
+            model.load_weights(ARGS.load_weights, by_name = True)
+    else:
+        raise Exception('cannot evaluate the model when pretrained load_weights is not specified')
+
+
+    #collect the dataset into a dictionary list
+    data_generator = DatasetCreator(ARGS.atari_game, ARGS.image_size)
+    data_generator.create_datasets(PATH_TO_DATA)
+
+
+    visualize_predictions(model,logs_path, data_generator.test)
+
+
+
+
 if __name__=='__main__':
     #obtaining args input for training/testing
     ARGS = parse_arguments()
 
-    main(ARGS)
+    # main(ARGS)
+    main_eval(ARGS)
