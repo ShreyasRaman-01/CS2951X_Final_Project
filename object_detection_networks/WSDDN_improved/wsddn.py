@@ -308,14 +308,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
             class_filtered_features = normalized_rois_feature[(region_predictions==i)]
 
-            # na as a row and nb as a column vectors
-            na = tf.reshape(class_filtered_features, [-1, 1])
-            nb = tf.reshape(class_filtered_features, [1, -1])
-
-            # return pairwise euclidean difference matrix: returns an (nxn) matrix, where 'n' is the number of regions with a given class
-            distance_matrix_same = tf.sqrt(tf.reduce_max(na - 2*tf.linalg.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
-
-
+            distance_matrix_same = tf.reduce_sum((tf.expand_dims(class_filtered_features, 1)-tf.expand_dims(class_filtered_features, 0))**2,2)
 
             #largest distance between feature vectors of the SAME class 'i'
             max_dist_same = tf.reduce_max(distance_matrix_same)
@@ -324,11 +317,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
             non_class_filtered_features = normalized_rois_feature[(region_predictions!=i)]
 
-            # na as a row and nb as a column vectors
-            na = tf.reshape(class_filtered_features, [-1, 1])
-            nb = tf.reshape(non_class_filtered_features, [1, -1])
-            # return pairwise euclidean difference matrix: returns an (nxn) matrix, where 'n' is the number of regions with a given class
-            distance_matrix_different = tf.sqrt(tf.reduce_max(na - 2*tf.matmul(class_filtered_features, non_class_filtered_features, False, True) + nb, 0.0))
+            distance_matrix_different = tf.reduce_sum((tf.expand_dims(class_filtered_features, 1)-tf.expand_dims(non_class_filtered_features, 0))**2,2)
 
 
             #smallest distance between feature vector of class 'i' and DIFFERENT class
