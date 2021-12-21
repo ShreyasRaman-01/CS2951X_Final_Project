@@ -349,6 +349,8 @@ def visualize_losses(logs_path):
     train_logs = os.path.join(logs_path, 'train_loss_data.csv')
     val_logs = os.path.join(logs_path, 'val_loss_data.csv')
 
+    pdb.set_trace()
+
     train_loss = pd.read_csv(train_logs)['train_loss'].values
     val_loss = pd.read_csv(val_logs)['val_loss'].values
 
