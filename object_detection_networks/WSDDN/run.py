@@ -324,7 +324,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
     plt.ylabel('training loss')
     plt.savefig( os.path.join(logs_path, 'train_loss.png') )
 
-    plt.plot( range(len(total_loss_val))  )  , total_loss_val )
+    plt.plot( range(len(total_loss_val))  , total_loss_val )
     plt.title('Validation loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('testing loss')
@@ -332,7 +332,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
     plot_loss_train = total_loss_train[0:len(total_loss_train):hp.validation_batch_freq]
 
-    plt.plot(range(len(plot_loss_train)), plot_loss_train, label = 'training')
+    plt.plot( range(len(plot_loss_train)), plot_loss_train, label = 'training')
     plt.plot(range(len(plot_loss_val)), plot_loss_val, label = 'validation' )
     plt.title('Training & Validation loss by batch')
     plt.xlabel('batch number')
