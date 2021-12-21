@@ -164,6 +164,8 @@ class WeaklySupervisedDetection(tf.keras.Model):
         image = self.preprocess(image)
         backbone_pre_pooling_output = self.backbone(image)
 
+        self.feat_map_scaling = int(backbone_pre_pooling_output.shape[1]/image.shape[1])
+
         # block5_pooling_output = MaxPool2D(2, name="block5_pool")(backbone_pre_pooling_output)
         '''Get the regions of interest (ROIs) using the RPN layer '''
         [objectness, original_rois, backbone_pre_pooling_output] = self.rpn_layer(backbone_pre_pooling_output)
