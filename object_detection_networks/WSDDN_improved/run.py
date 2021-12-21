@@ -203,7 +203,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
                 image = tf.expand_dims(image, axis=0)
 
-                pdb.set_trace()
+                # pdb.set_trace()
                 output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
 
 
