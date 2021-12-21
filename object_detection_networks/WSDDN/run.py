@@ -432,6 +432,7 @@ def visualize_predictions(model,logs_path, test_data):
 
         image_path = os.path.join(logs_path, 'sample_image_{}.png'.format(str(i)))
         plt.savefig(image_path)
+        plt.clf()
         print('Saved image {}'.format(str(i)))
 
     print('Finished processing all sample images!')
