@@ -99,7 +99,13 @@ class DatasetCreator:
         #iterating the testing dataset + loading images
         for i, image in enumerate(os.listdir(os.path.join(path_to_data, self.game, self.size, 'test'))):
 
-            self.test_data.append([os.path.join(path_to_data, self.game, self.size, 'test', image), class_label])
+
+
+            batch_of_images.append([os.path.join(path_to_data, self.game, self.size, 'test', image), class_label])
+
+            if (i+1)%hp.batch_size==0:
+                self.test_data.append(batch_of_images)
+                batch_of_images = []
 
 
         self.train_data = np.array(self.train_data); self.test_data = np.array(self.test_data)
@@ -235,10 +241,6 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         for batch_no, data_batch in enumerate(train_data):
 
 
-            #preprocessing the image for VGG network
-            #image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
-            #x_batch = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in data_batch])
-
             #shuffle the batch of images first (both images and labels)
             np.random.shuffle(data_batch)
 
@@ -259,32 +261,28 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #run model on validation dataset to get validation loss metrics
             if (batch_no)%hp.validation_batch_freq==0:
 
-                #preprocessing the image for VGG network
-                # image_preprocessing_fn = preprocessing_factory.get_preprocessing('vgg', is_training=True)
-                #x_val = np.array([image_preprocessing_fn(Image.open(x[0]), out_shape=(224, 224)) for x in val_data])
-
-                #shuffle the validation dataset first (both images and labels)
-                np.random.shuffle(val_data)
-
-                x_val = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_size)) for x in val_data]
-
-                y_val = list(val_data[:,1])
-
-                #running training for each image
-                val_loss = train_step(x_val, y_val, True)
-
-                #update the minimum loss reference + save the weights files
-                if val_loss < min_val_loss:
-
-                    print('Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
-
-                    min_val_loss = val_loss
-                    model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
+                for batch_no, val_data_batch in enumerate(val_data):
+                    #shuffle the validation dataset first (both images and labels)
+                    np.random.shuffle(val_data_batch)
 
 
-                total_loss_val.append(loss_value)
+                    x_val = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_size)) for x in val_data_batch]
+
+                    y_val = list(val_data_batch[:,1])
+
+                    #running training for each image
+                    val_loss = train_step(x_val, y_val, True)
+
+                    #update the minimum loss reference + save the weights files
+                    if val_loss < min_val_loss:
+
+                        print('Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
+
+                        min_val_loss = val_loss
+                        model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
 
 
+                    total_loss_val.append(loss_value)
 
 
         end_time = time.time()
