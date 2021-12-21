@@ -4,13 +4,13 @@ All hyperparameters to the WSDDN model
 '''
 
 #number of epochs to run training
-num_epochs = 8
+num_epochs = 20
 
 #frequency of batches with which to record validation results
 validation_batch_freq = 10
 
 #learning rate for the 1st half of the epochs
-learning_rate_1 = 1e-4
+learning_rate_1 = 5e-4
 #learning rate for the 2nd half of the epochs
 learning_rate_2 = 1e-5
 
@@ -31,7 +31,7 @@ num_classes = 2
 
 #weight for L2 regularization + weight for spatial regularization
 weight_decay = 1.0
-spatial_reg_weight = 5e-4
+spatial_reg_weight = 1e-3
 
 
 #number of anchor boxes to apply to each anchor point
@@ -48,4 +48,4 @@ reshaped_image_size = (200,200)
 spatial_reg_iou_threshold = 0.8
 
 #for the sake of separating out graphical outputs + weights
-experiment_number = 2
+experiment_number = 3
