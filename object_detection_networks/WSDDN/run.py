@@ -355,7 +355,6 @@ def visualize_losses(logs_path):
     train_logs = os.path.join(logs_path, 'train_loss_data.csv')
     val_logs = os.path.join(logs_path, 'val_loss_data.csv')
 
-    pdb.set_trace()
 
     train_loss = pd.read_csv(train_logs)['train_loss'].values
     val_loss = pd.read_csv(val_logs)['val_loss'].values
@@ -394,7 +393,6 @@ def visualize_losses(logs_path):
 def visualize_predictions(model,logs_path, test_data):
 
     print('Visualizing predictions on test samples...')
-    pdb.set_trace()
 
     test_batch_idx = np.random.choice(range(len(test_data)), size=1, replace= False)
     test_data = test_data[test_batch_idx][0]
@@ -511,13 +509,13 @@ def main(ARGS):
 
 def main_eval(ARGS):
 
-    # #updating hyperparameters based on number of classes to find
-    # hp.num_classes = int(ARGS.num_classes)
-    #
-    # #extracting data to save the weight checkpoints and logs (for losses or energy function)
-    # logs_path = os.path.join("logs" , str(hp.experiment_number) )
-    #
-    # visualize_losses(logs_path)
+    #updating hyperparameters based on number of classes to find
+    hp.num_classes = int(ARGS.num_classes)
+
+    #extracting data to save the weight checkpoints and logs (for losses or energy function)
+    logs_path = os.path.join("logs" , str(hp.experiment_number) )
+
+    visualize_losses(logs_path)
 
     if ARGS.task=='train':
         raise Exception('cannot run the evaluation script when the \'train\' argument is present ')

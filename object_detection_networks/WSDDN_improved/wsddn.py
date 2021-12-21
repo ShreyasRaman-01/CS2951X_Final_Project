@@ -157,7 +157,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
 
-    def call(self, image, labels, spatial_reg=False):
+    def call(self, image, spatial_reg=False):
         '''Performs the forward pass of the WSDDN on input 'x' '''
 
         '''VGG backbone and pooling: pre SPP or ROI pool'''
@@ -266,9 +266,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
         #compute new losses by region i.e. regions with different class should have different descriptors
-        difference_loss = self.difference_loss(fc_detect_out, rois_feature)
-
-
+        triplet_loss = self.difference_triplet_loss(fc_detect_out, rois_feature)
 
 
         #add spatial regularization if needed
@@ -279,20 +277,73 @@ class WeaklySupervisedDetection(tf.keras.Model):
         if spatial_reg:
             spatial_regularizer_output = self.spatial_regularizer(scores, labels, fc_output, tf.convert_to_tensor(rois))
 
-        #re-scale the reduced ROIs (on the VGG-16 feature map output space) back to the coordinate space for original image
-        filtered_origin_rois = filtered_origin_rois*self.feat_map_scaling
 
 
-        #mean objectness loss for non-background region predictions
-        #objectness_loss = self.objectness_loss(filtered_origin_rois, image)
-
-
-        return  filtered_origin_rois, spatial_regularizer_output
+        return  similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output
 
 
 
-    def difference_loss(self, fc_detect_out, rois_feature):
-        '''Uses a distance metric to find the pairwise distance between regions in different classes'''
+    def difference_triplet_loss(self, fc_detect_out, rois_feature):
+        '''
+        Uses a distance metric to find the pairwise distance between regions in different classes
+        composes a triplet loss on the scaled feature flattened feature maps
+        '''
+
+        #convert fc_detect_out scores to class predictions for each region
+        region_predictions = tf.argmax(fc_detect_out, axis=1)
+        #find class with highest prob for each region
+
+        total_triplet_loss = 0
+
+
+        #normalize rois_feature along each region
+        normalized_rois_feature = tf.linalg.norm(rois_feature, ord='euclidean', axis=1)
+
+        #iterate each class and find the largest distance with the same class + shortest distance with any different class
+        for i in range(hp.num_classes+1):
+
+            #if there are no regions predicted to be in a given class
+            if tf.reduce_sum(tf.cast(region_predictions==i), dtype=tf.int8) == 0:
+                continue
+
+            class_filtered_features = normalized_rois_feature[(region_predictions==i)]
+
+            # na as a row and nb as a column vectors
+            na = tf.reshape(class_filtered_features, [-1, 1])
+            nb = tf.reshape(class_filtered_features, [1, -1])
+
+            # return pairwise euclidean difference matrix: returns an (nxn) matrix, where 'n' is the number of regions with a given class
+            distance_matrix_same = tf.sqrt(tf.reduce_max(na - 2*tf.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
+
+
+
+            #largest distance between feature vectors of the SAME class 'i'
+            max_dist_same = tf.reduce_max(distance_matrix_same)
+
+
+
+            non_class_filtered_features = normalized_rois_feature[(region_predictions!=i)]
+
+            # na as a row and nb as a column vectors
+            na = tf.reshape(class_filtered_features, [-1, 1])
+            nb = tf.reshape(non_class_filtered_features, [1, -1])
+            # return pairwise euclidean difference matrix: returns an (nxn) matrix, where 'n' is the number of regions with a given class
+            distance_matrix_different = tf.sqrt(tf.reduce_max(na - 2*tf.matmul(class_filtered_features, non_class_filtered_features, False, True) + nb, 0.0))
+
+
+            #smallest distance between feature vector of class 'i' and DIFFERENT class
+            min_dist_different = tf.reduce_min(distance_matrix_different)
+
+
+
+            #compute the triplet loss formulation
+            class_loss = tf.maximum(tf.math.square(max_dist_same)-tf.math.square(min_dist_different)+hp.triplet_soft_margin, 0)
+
+
+            total_triplet_loss = total_triplet_loss + class_loss
+
+
+        return total_triplet_loss
 
 
 
@@ -322,7 +373,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             nb = tf.reshape(class_filtered_features, [1, -1])
 
             # return pairwise euclidean difference matrix: returns an (nxn) matrix, where 'n' is the number of regions with a given class
-            distance_matrix = tf.sqrt(tf.maximum(na - 2*tf.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
+            distance_matrix = tf.sqrt(tf.reduce_max(na - 2*tf.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
 
             distance_matrix = tf.reduce_mean(distance_matrix)
 

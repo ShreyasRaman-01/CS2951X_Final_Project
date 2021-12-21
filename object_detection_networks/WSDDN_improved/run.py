@@ -25,7 +25,7 @@ import pdb
 # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 PATH_TO_DATA = '/home/shreyas_sundara_raman/CS2951X_Final_Project/object_detection_networks/data'
-PATH_TO_WEIGHTS = '/home/shreyas_sundara_raman/CS2951X_Final_Project/object_detection_networks/WSDDN/weights'
+PATH_TO_WEIGHTS = '/home/shreyas_sundara_raman/CS2951X_Final_Project/object_detection_networks/WSDDN_improved/weights'
 
 #create the weights saving path if it doesn't exist
 if not os.path.isdir(os.path.join(PATH_TO_WEIGHTS,str(hp.experiment_number))):
@@ -171,6 +171,7 @@ def parse_arguments():
 
 def drawBoxes(boxes):
     for (x, y, w, h) in boxes:
+        random_color = [1,0,0]
         plt.hlines(y, x, x + w)
         plt.hlines(y + h, x, x + w)
         plt.vlines(x, y, y + h)
@@ -204,14 +205,14 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
 
 
-                output, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
+                similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output = model.call(image, spatial_reg)
 
 
                 #if no ROIs or regions found, skip to the next image to train on
                 if (output, scores, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None):
                     continue
 
-                loss_value = loss_value + model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(label, tf.float32)) + model.l2_regularizer() + spatial_regularizer_output
+                loss_value = loss_value + similarity_loss + triplet_loss + model.l2_regularizer() + spatial_regularizer_output
 
 
             loss_value = loss_value/len(image_batch) #loss averaged over batch
@@ -225,11 +226,13 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         #applying gradients with the custom optimizer
         model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
 
-        return loss_value, filtered_origin_rois.shape[0]
+        return loss_value, similarity_loss, triplet_loss, filtered_origin_rois.shape[0]
 
 
     #logging the loss over epochs
     total_loss_train = []
+    similarity_loss_train = []
+    triplet_loss_train = []
     total_loss_val = []
     min_val_loss = float("inf")
 
@@ -254,14 +257,18 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             y_batch = list(data_batch[:,1])
 
             #running training for each image
-            train_loss, train_num_regions = train_step(x_batch, y_batch, True)
+            train_loss, train_similarity_loss, train_triplet_loss, train_num_regions = train_step(x_batch, y_batch, True)
             train_loss = train_loss.numpy()
-            # pdb.set_trace()
+            train_similarity_loss = train_similarity_loss.numpy()
+            train_triplet_loss = train_triplet_loss.numpy()
+
 
             total_loss_train.append(train_loss)
+            similarity_loss_train.append(train_similarity_loss)
+            triplet_loss_train.append(train_triplet_loss)
 
             #update progress bar on each batch
-            progbar.update(batch_no+1, [ ('train_loss', train_loss), ('train_regions',train_num_regions) ])
+            progbar.update(batch_no+1, [ ('train_loss', train_loss), ('similarity_loss',train_similarity_loss), ('triplet_loss', train_triplet_loss), ('train_regions',train_num_regions) ])
 
 
 
@@ -294,7 +301,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                         print('\nMin. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
 
                         min_val_loss = val_loss
-                        model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
+                        model.save_model(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.h5'.format(epoch, val_loss) )  )
 
 
         end_time = time.time()
@@ -343,25 +350,94 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
     return total_loss_train, total_loss_val
 
-def visualize_losses(train_loss, val_loss, logs_path):
+def visualize_losses(logs_path):
+
+    train_logs = os.path.join(logs_path, 'train_loss_data.csv')
+    val_logs = os.path.join(logs_path, 'val_loss_data.csv')
+
+
+    train_loss = pd.read_csv(train_logs)['train_loss'].values
+    val_loss = pd.read_csv(val_logs)['val_loss'].values
 
     print('Plotting loss figures....')
 
     #log and graph the losses using the log_path argument
-    plt.plot( len(train_loss), train_loss )
+    plt.plot( range(len(train_loss)), train_loss )
     plt.title('Training loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('training loss')
     plt.savefig( os.path.join(logs_path, 'train_loss.png') )
+    plt.clf()
 
-    plt.plot(  len(val_loss)  , val_loss )
+    plot_val_loss = val_loss[0:len(val_loss):2]
+    plt.plot(  range(0, 10*len(plot_val_loss), 10)  , plot_val_loss )
     plt.title('Validation loss by batch')
     plt.xlabel('batch number')
-    plt.ylabel('testing loss')
+    plt.ylabel('validation loss')
     plt.savefig( os.path.join(logs_path, 'val_loss.png') )
+    plt.clf()
+
+    plot_train_loss = train_loss[0:len(train_loss):hp.validation_batch_freq]
+
+    plt.plot( range(0,10*len(plot_train_loss),10), plot_train_loss, label='training'  )
+    plt.plot(range(0,10*len(plot_val_loss),10), plot_val_loss, label = 'validation' )
+    plt.title('Training & Validation loss by batch')
+    plt.xlabel('batch number')
+    plt.ylabel('train/validation loss')
+    plt.legend()
+    plt.savefig(os.path.join(logs_path,'train_val_loss.png'))
+    plt.clf()
 
     print('Finished plotting losses!')
 
+def visualize_predictions(model,logs_path, test_data):
+
+    print('Visualizing predictions on test samples...')
+
+    test_batch_idx = np.random.choice(range(len(test_data)), size=1, replace= False)
+    test_data = test_data[test_batch_idx][0]
+
+    test_sample_idx = np.random.choice(range(len(test_data)), size=3, replace=False)
+
+    #convert paths to images
+    test_sample = [ np.asarray(Image.open(test_data[i][0]).resize(hp.reshaped_image_size)) for i in test_sample_idx]
+
+    #run the model on inference mode for each sample: without spatial regularization where label is not necessary
+    for i,sample in enumerate(test_sample):
+
+        sample= tf.expand_dims(sample, axis=0)
+
+        output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(sample, None, False)
+
+        #find the top 5 regions with max scores
+        top_scores = tf.argsort(scores, axis=0).numpy()
+        top_scores = set(np.append(top_scores[-3:,0], top_scores[-3:,1]))
+
+
+        filtered_origin_rois = (filtered_origin_rois*int(1/model.feat_map_scaling)).numpy()
+
+        #first plot the sample image, then plot the rois on top
+        plt.imshow(tf.squeeze(sample).numpy())
+
+        reformatted_rois = []
+
+        for roi_index in top_scores:
+
+            #convert the roi to the (x, y, w, h) format
+            (x1, x2, y1, y2) = filtered_origin_rois[roi_index]
+
+            reformatted_rois.append(  (x1, y1, x2-x1+1, y2-y1+1)  )
+
+
+        #draw the bounding boxes onto the figure
+        drawBoxes(reformatted_rois)
+
+        image_path = os.path.join(logs_path, 'sample_image_{}.png'.format(str(i)))
+        plt.savefig(image_path)
+        plt.clf()
+        print('Saved image {}'.format(str(i)))
+
+    print('Finished processing all sample images!')
 
 
 def test(model, test_data):
@@ -413,8 +489,6 @@ def main(ARGS):
         os.makedirs(logs_path)
 
 
-    #add custom metrics and losses to model
-    #model.compile(optimizer=model.optimizer, loss=model.loss_fn+model.spatial_regularizer, metrics=[?])
 
 
     #collect the dataset into a dictionary list
@@ -433,6 +507,45 @@ def main(ARGS):
     if bool(ARGS.visualize):
         visualize_losses(total_loss_train, total_loss_val)
 
+def main_eval(ARGS):
+
+    #updating hyperparameters based on number of classes to find
+    hp.num_classes = int(ARGS.num_classes)
+
+    #extracting data to save the weight checkpoints and logs (for losses or energy function)
+    logs_path = os.path.join("logs" , str(hp.experiment_number) )
+
+    visualize_losses(logs_path)
+
+    if ARGS.task=='train':
+        raise Exception('cannot run the evaluation script when the \'train\' argument is present ')
+
+    #collect the dataset into a dictionary list
+    data_generator = DatasetCreator(ARGS.atari_game, ARGS.image_size)
+    data_generator.create_datasets(PATH_TO_DATA)
+
+
+    #create WSDDN model instance + pass in backbone architecture to use e.g. VGG16 or VGG19
+    model = WSDDN_Model(ARGS.backbone)
+    model.compile()
+
+    test_image = data_generator.test_data[0][0]
+
+    model( tf.expand_dims(np.asarray(Image.open(test_image[0]).resize(hp.reshaped_image_size)), axis=0), None, False)
+
+    if ARGS.load_weights is not None:
+        if ARGS.backbone=='VGG16':
+            model.load_weights(ARGS.load_weights, by_name = True)
+        elif ARGS.backbone=='VGG19':
+            model.load_weights(ARGS.load_weights, by_name = True)
+    else:
+        raise Exception('cannot evaluate the model when pretrained load_weights is not specified')
+
+    pdb.set_trace()
+
+    logs_path = os.path.join("logs" , str(hp.experiment_number) )
+
+    visualize_predictions(model,logs_path, data_generator.test_data)
 
 
 if __name__=='__main__':
@@ -440,3 +553,4 @@ if __name__=='__main__':
     ARGS = parse_arguments()
 
     main(ARGS)
+    #main_eval(ARGS)

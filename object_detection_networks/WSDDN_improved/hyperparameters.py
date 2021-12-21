@@ -10,9 +10,9 @@ num_epochs = 20
 validation_batch_freq = 10
 
 #learning rate for the 1st half of the epochs
-learning_rate_1 = 1e-4
+learning_rate_1 = 5e-4
 #learning rate for the 2nd half of the epochs
-learning_rate_2 = 1e-5
+learning_rate_2 = 5e-5
 
 
 momentum = 0.01
@@ -38,7 +38,7 @@ spatial_reg_weight = 5e-4
 num_anchors = 9
 
 
-objectness_threshold = 0.7
+objectness_threshold = 0.6
 
 roi_pooling_output = [6,6]
 reshaped_image_size = (200,200)
@@ -48,4 +48,7 @@ reshaped_image_size = (200,200)
 spatial_reg_iou_threshold = 0.8
 
 #for the sake of separating out graphical outputs + weights
-experiment_number = 2
+experiment_number = 1
+
+#weights for triplet loss per class
+triplet_soft_margin = 5e-5
