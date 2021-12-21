@@ -417,7 +417,7 @@ def visualize_predictions(model,logs_path, test_data):
         #first plot the sample image, then plot the rois on top
         sample = tf.squeeze(sample).numpy()
         sample = np.dot(sample[:,:,:3], [0.2989, 0.5870, 0.1140]) #convert to greyscale to see the boxes better
-        plt.imshow(sample, cmap=plt.get_cmap('gray'), vmin=0, vmax=1)
+        plt.imshow(sample, cmap=plt.get_cmap('gray'), vmin=0.5, vmax=1)
 
         reformatted_rois = []
 
