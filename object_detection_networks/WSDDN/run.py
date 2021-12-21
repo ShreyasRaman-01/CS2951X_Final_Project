@@ -512,11 +512,18 @@ def main_eval(ARGS):
     if ARGS.task=='train':
         raise Exception('cannot run the evaluation script when the \'train\' argument is present ')
 
-    
+    #collect the dataset into a dictionary list
+    data_generator = DatasetCreator(ARGS.atari_game, ARGS.image_size)
+    data_generator.create_datasets(PATH_TO_DATA)
+
 
     #create WSDDN model instance + pass in backbone architecture to use e.g. VGG16 or VGG19
     model = WSDDN_Model(ARGS.backbone)
     model.compile()
+
+    test_image = data_generator.test_data[0][0]
+
+    model.call(np.asarray(Image.open(test_image[0]).resize(hp.reshaped_image_size)), None, False)
 
     if ARGS.load_weights is not None:
         if ARGS.backbone=='VGG16':
@@ -526,10 +533,6 @@ def main_eval(ARGS):
     else:
         raise Exception('cannot evaluate the model when pretrained load_weights is not specified')
 
-
-    #collect the dataset into a dictionary list
-    data_generator = DatasetCreator(ARGS.atari_game, ARGS.image_size)
-    data_generator.create_datasets(PATH_TO_DATA)
 
 
     visualize_predictions(model,logs_path, data_generator.test)
