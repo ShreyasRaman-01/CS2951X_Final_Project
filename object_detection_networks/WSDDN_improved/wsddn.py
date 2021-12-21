@@ -313,7 +313,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             nb = tf.reshape(class_filtered_features, [1, -1])
 
             # return pairwise euclidean difference matrix: returns an (nxn) matrix, where 'n' is the number of regions with a given class
-            distance_matrix_same = tf.sqrt(tf.reduce_max(na - 2*tf.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
+            distance_matrix_same = tf.sqrt(tf.reduce_max(na - 2*tf.linalg.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
 
 
 
@@ -373,7 +373,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             nb = tf.reshape(class_filtered_features, [1, -1])
 
             # return pairwise euclidean difference matrix: returns an (nxn) matrix, where 'n' is the number of regions with a given class
-            distance_matrix = tf.sqrt(tf.reduce_max(na - 2*tf.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
+            distance_matrix = tf.sqrt(tf.reduce_max(na - 2*tf.linalg.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
 
             distance_matrix = tf.reduce_mean(distance_matrix)
 
