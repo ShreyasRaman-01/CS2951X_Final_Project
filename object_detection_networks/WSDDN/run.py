@@ -225,7 +225,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         #applying gradients with the custom optimizer
         model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
 
-        return loss_value
+        return loss_value, filtered_origin_rois.shape[0]
 
 
     #logging the loss over epochs
@@ -249,19 +249,19 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             #shuffle the batch of images first (both images and labels)
             np.random.shuffle(data_batch)
 
-            x_batch = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_size)) for x in data_batch]
+            x_batch = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_image_size)) for x in data_batch]
 
             y_batch = list(data_batch[:,1])
 
             #running training for each image
-            train_loss = train_step(x_batch, y_batch, True)
+            train_loss, train_num_regions = train_step(x_batch, y_batch, True)
             train_loss = train_loss.numpy()
             pdb.set_trace()
 
             total_loss_train.append(train_loss)
 
             #update progress bar on each batch
-            progbar.update(batch_no+1, [ ('train_loss', train_loss) ])
+            progbar.update(batch_no+1, [ ('train_loss', train_loss), ('train_regions',train_num_regions) ])
 
 
 
@@ -276,15 +276,16 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                     np.random.shuffle(val_data_batch)
 
 
-                    x_val = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_size)) for x in val_data_batch]
+                    x_val = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_image_size)) for x in val_data_batch]
 
                     y_val = list(val_data_batch[:,1])
 
                     #running training for each image
-                    val_loss = train_step(x_val, y_val, True)
+                    val_loss, val_num_regions  = train_step(x_val, y_val, True)
                     val_loss = val_loss.numpy()
 
                     print('val_loss: ', val_loss)
+                    print('val_regions': val_num_regions)
 
                     #update the minimum loss reference + save the weights files
                     if val_loss < min_val_loss:
