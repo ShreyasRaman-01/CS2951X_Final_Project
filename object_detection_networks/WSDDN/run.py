@@ -238,7 +238,9 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         #record start time per epoch
         start_time = time.time()
 
-        progbar = generic_utils.Progbar(len(train_data[0]))
+        #create progress bar with total number of batches
+        progbar = generic_utils.Progbar(len(train_data))
+
         print('Epoch {}/{}'.format(epoch+1, hp.num_epochs))
 
         for batch_no, data_batch in enumerate(train_data):
@@ -257,14 +259,15 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
             total_loss_train.append(loss_value)
 
-            progbar.update(batch_no, [ ('loss', loss_value) ])
+            #update progress bar on each batch
+            progbar.update(batch_no+1, [ ('loss', loss_value) ])
 
-            # pdb.set_trace()
+
 
             #run model on validation dataset to get validation loss metrics
-            if (batch_no)%hp.validation_batch_freq==0:
+            if (batch_no+1)%hp.validation_batch_freq==0:
 
-                for batch_no, val_data_batch in enumerate(val_data):
+                for __, val_data_batch in enumerate(val_data):
 
                     #shuffle the validation dataset first (both images and labels)
                     np.random.shuffle(val_data_batch)
@@ -280,7 +283,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                     #update the minimum loss reference + save the weights files
                     if val_loss < min_val_loss:
 
-                        print('Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
+                        print('\n Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
 
                         min_val_loss = val_loss
                         model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )

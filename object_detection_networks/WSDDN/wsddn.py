@@ -116,9 +116,9 @@ class WeaklySupervisedDetection(tf.keras.Model):
         ]
 
         #intermediate dense layers after extracting region-wise features (pooling layer)
-        self.fc6 = Dense(8192, activation='relu', name="block6_fc")
-        self.fc7 = Dense(4096, activation = 'relu', name="block7_fc")
-        self.fc7_5 = Dense(2048, activation='relu', name="block7.5_fc")
+        self.fc6 = Dense(4096, activation='relu', name="block6_fc")
+        self.fc7 = Dense(2048, activation = 'relu', name="block7_fc")
+        self.fc7_5 = Dense(1024, activation='relu', name="block7.5_fc")
 
 
         #classification branch layers: performed on individual regions
