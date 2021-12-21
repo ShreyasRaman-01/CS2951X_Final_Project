@@ -397,7 +397,7 @@ def visualize_predictions(model,logs_path, test_data):
     pdb.set_trace()
 
     test_batch_idx = np.random.choice(range(len(test_data)), size=1, replace= False)
-    test_data = test_data[test_batch_idx]
+    test_data = test_data[test_batch_idx][0]
 
     test_sample_idx = np.random.choice(range(len(test_data)), size=3, replace=False)
 
