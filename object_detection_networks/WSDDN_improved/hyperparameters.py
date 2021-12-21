@@ -53,6 +53,6 @@ experiment_number = 1
 #weights for triplet loss per class
 triplet_soft_margin = 1e-6
 
-triplet_loss_weight = 1e-1
-similarity_loss_weight = 1e-1
+triplet_loss_weight = 1.0
+similarity_loss_weight = 1.0
 cross_entropy_loss_weight = 1e-1
