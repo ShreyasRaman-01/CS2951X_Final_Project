@@ -297,7 +297,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
         #normalize rois_feature along each region
-        normalized_rois_feature = tf.linalg.norm(rois_feature, ord='euclidean', axis=1)[0]
+        normalized_rois_feature = tf.linalg.normalize(rois_feature, ord='euclidean', axis=1)[0]
 
         #iterate each class and find the largest distance with the same class + shortest distance with any different class
         for i in range(hp.num_classes+1):
