@@ -204,7 +204,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
 
 
-                output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
+                output, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
 
 
                 #if no ROIs or regions found, skip to the next image to train on
@@ -288,6 +288,14 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
                     total_loss_val.append(val_loss)
 
+                    #update the minimum loss reference + save the weights files
+                    if val_loss < min_val_loss:
+
+                        print('\nMin. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
+
+                        min_val_loss = val_loss
+                        model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
+
 
         end_time = time.time()
 
@@ -295,13 +303,6 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         print('Validation Loss: ', val_loss)
         print('Elapsed Time: ', end_time-start_time)
 
-        #update the minimum loss reference + save the weights files
-        if val_loss < min_val_loss:
-
-            print('\nMin. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
-
-            min_val_loss = val_loss
-            model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
 
         print('Saving logs....')
         #saving log of all losses (training and validation)
@@ -333,7 +334,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
     plot_loss_train = total_loss_train[0:len(total_loss_train):hp.validation_batch_freq]
 
     plt.plot( range(len(plot_loss_train)), plot_loss_train, label = 'training')
-    plt.plot(range(len(plot_loss_val)), plot_loss_val, label = 'validation' )
+    plt.plot(range(len(total_loss_val)), total_loss_val, label = 'validation' )
     plt.title('Training & Validation loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('training/validation loss')

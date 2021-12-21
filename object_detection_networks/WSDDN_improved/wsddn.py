@@ -179,7 +179,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         '''Resizing the ROIs and pooling original proposals'''
         backbone_pre_pooling_output = tf.squeeze(backbone_pre_pooling_output)
 
-        #original_rois are of the form x1, x2, y1, y2
+        #original_rois are of the form x1, x2, y1, y2: rescale to the original input image size
         x1 = original_rois[:,0]*(backbone_pre_pooling_output.shape[1])
         x2 = original_rois[:,1]*(backbone_pre_pooling_output.shape[1])
         y1 = original_rois[:,2]*(backbone_pre_pooling_output.shape[0])
@@ -187,7 +187,9 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         original_rois = tf.stack([x1,x2,y1,y2], axis=1)
         #use absolute value to convert + remove negative region proposals
-        #Note: original_rois shape (num rois, 4)
+        #note: original_rois shape (num rois, 4)
+
+
 
         rois = []
         filtered_origin_rois = []
@@ -255,10 +257,16 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         #hadamard product (elementwise) across detection and classification outputs
         scores = tf.multiply(fc_class_out, fc_detect_out)
-        output = tf.reduce_sum(scores, axis=0) #summing scores for each class: across the regions
 
-        #clipping outputs within 0-1 range
-        output = tf.clip_by_value(output, 0.0, 1.0, name="clipping_scores")
+
+        #compute new losses by region i.e. all regions with same class should have similar descriptors
+        similarity_loss = self.similarity_loss(fc_detect_out, rois_feature)
+
+
+        #compute new losses by region i.e. regions with different class should have different descriptors
+        difference_loss = self.difference_loss(fc_detect_out, rois_feature)
+
+
 
 
         #add spatial regularization if needed
@@ -269,10 +277,58 @@ class WeaklySupervisedDetection(tf.keras.Model):
         if spatial_reg:
             spatial_regularizer_output = self.spatial_regularizer(scores, labels, fc_output, tf.convert_to_tensor(rois))
 
-        return output, scores, filtered_origin_rois, spatial_regularizer_output
+        #re-scale the reduced ROIs (on the VGG-16 feature map output space) back to the coordinate space for original image
+        filtered_origin_rois = filtered_origin_rois*self.feat_map_scaling
+
+
+        #mean objectness loss for non-background region predictions
+        #objectness_loss = self.objectness_loss(filtered_origin_rois, image)
+
+
+        return  filtered_origin_rois, spatial_regularizer_output
 
 
 
+    def difference_loss(self, fc_detect_out, rois_feature):
+        '''Uses a distance metric to find the pairwise distance between regions in different classes'''
+
+        
+
+    def similarity_loss(self, fc_detect_out, rois_feature):
+        '''Uses a distance metric to find the pair-wise distances between regions predicted to be in the same class'''
+
+        #convert fc_detect_out scores to class predictions for each region
+        region_predictions = tf.argmax(fc_detect_out, axis=1)
+        #find class with highest prob for each region
+
+        total_similarity_loss = 0
+
+        #iterate each class and find all regions with that class labelling
+        for i in range(hp.num_classes + 1):
+
+            #if there are no regions predicted to be in a given class
+            if tf.reduce_sum(tf.cast(region_predictions==i), dtype=tf.int8) == 0:
+                continue
+
+            class_filtered_features = rois_feature[(region_predictions==i)]
+
+            class_filtered_features = tf.linalg.normalize(class_filtered_features, ord='euclidean', axis=1)
+
+
+            # na as a row and nb as a column vectors
+            na = tf.reshape(class_filtered_features, [-1, 1])
+            nb = tf.reshape(class_filtered_features, [1, -1])
+
+            # return pairwise euclidean difference matrix: returns an (nxn) matrix, where 'n' is the number of regions with a given class
+            distance_matrix = tf.sqrt(tf.maximum(na - 2*tf.matmul(class_filtered_features, class_filtered_features, False, True) + nb, 0.0))
+
+            distance_matrix = tf.reduce_mean(distance_matrix)
+
+            total_similarity_loss = total_similarity_loss + distance_matrix
+
+
+        #the sum of mean differences between regions predicted as the same class
+        return total_similarity_loss
 
 
 
@@ -357,7 +413,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         '''Energy function to optimize by the model for a single iamge'''
 
         #since all the classes will be present in the screen, the loss reduces to log prob. sum
-        return tf.sum(tf.log(probabilities)) + self.l2_regularizer()
+        return tf.sum(tf.log(probabilities))
 
 
     @staticmethod

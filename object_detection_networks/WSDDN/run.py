@@ -266,7 +266,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
 
             #run model on validation dataset to get validation loss metrics
-            if (batch_no)%hp.validation_batch_freq==0:
+            if (batch_no+1)%hp.validation_batch_freq==0:
 
                 print('\nRunning validation set...')
 
@@ -333,7 +333,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
     plot_loss_train = total_loss_train[0:len(total_loss_train):hp.validation_batch_freq]
 
     plt.plot( range(len(plot_loss_train)), plot_loss_train, label = 'training')
-    plt.plot(range(len(plot_loss_val)), plot_loss_val, label = 'validation' )
+    plt.plot(range(len(total_loss_val)), total_loss_val, label = 'validation' )
     plt.title('Training & Validation loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('training/validation loss')
@@ -342,7 +342,13 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
     return total_loss_train, total_loss_val
 
-def visualize_losses(train_loss, val_loss, logs_path):
+def visualize_losses(logs_path):
+
+    train_logs = os.path.join(logs_path, 'train_loss_data.csv')
+    val_logs = os.path.join(logs_path, 'val_loss_data.csv')
+
+    train_loss = pd.read_csv(train_logs)['train_loss'].values
+    val_loss = pd.read_csv(val_logs)['val_loss'].values
 
     print('Plotting loss figures....')
 
@@ -358,6 +364,12 @@ def visualize_losses(train_loss, val_loss, logs_path):
     plt.xlabel('batch number')
     plt.ylabel('testing loss')
     plt.savefig( os.path.join(logs_path, 'val_loss.png') )
+
+    plot_train_loss = train_loss[0:len(train_loss):hp.validation_batch_freq]
+    plt.plot( len(plot_train_loss), plot_train_loss)
+    plt.title('Training & Validation loss by batch')
+    plt.xlabel('batch number')
+    plt.ylabel('train/test loss')
 
     print('Finished plotting losses!')
 
@@ -412,10 +424,6 @@ def main(ARGS):
         os.makedirs(logs_path)
 
 
-    #add custom metrics and losses to model
-    #model.compile(optimizer=model.optimizer, loss=model.loss_fn+model.spatial_regularizer, metrics=[?])
-
-
     #collect the dataset into a dictionary list
     data_generator = DatasetCreator(ARGS.atari_game, ARGS.image_size)
     data_generator.create_datasets(PATH_TO_DATA)
@@ -430,9 +438,17 @@ def main(ARGS):
 
 
     if bool(ARGS.visualize):
-        visualize_losses(total_loss_train, total_loss_val)
+        visualize_losses(logs_path)
 
+def main_eval(ARGS):
 
+    #updating hyperparameters based on number of classes to find
+    hp.num_classes = int(ARGS.num_classes)
+
+    #extracting data to save the weight checkpoints and logs (for losses or energy function)
+    logs_path = os.path.join("logs" , str(hp.experiment_number) )
+
+    visualize_losses(logs_path)
 
 if __name__=='__main__':
     #obtaining args input for training/testing
