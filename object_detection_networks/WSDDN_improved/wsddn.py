@@ -337,6 +337,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
             total_triplet_loss = total_triplet_loss + class_loss
 
+            pdb.set_trace()
 
         return hp.triplet_loss_weight*total_triplet_loss
 
