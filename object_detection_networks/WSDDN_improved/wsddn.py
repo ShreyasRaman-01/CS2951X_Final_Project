@@ -235,7 +235,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
         #if no rois collected or if rois is empty list
         if not rois:
-            return (None, None, None, None)
+            return (None, None, None, None, None)
 
 
         filtered_origin_rois = tf.convert_to_tensor(filtered_origin_rois)
@@ -260,7 +260,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #hadamard product (elementwise) across detection and classification outputs
         scores = tf.multiply(fc_class_out, fc_detect_out)
 
-        
+
         #compute new losses by region i.e. all regions with same class should have similar descriptors
         similarity_loss = self.similarity_loss(fc_detect_out, rois_feature)
 
