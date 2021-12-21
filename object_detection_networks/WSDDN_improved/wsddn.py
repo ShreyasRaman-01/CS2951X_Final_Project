@@ -343,7 +343,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             total_triplet_loss = total_triplet_loss + class_loss
 
 
-        return hp.similarity_loss_weight*total_triplet_loss
+        return hp.triplet_loss_weight*total_triplet_loss
 
 
 
@@ -376,7 +376,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
         #the sum of mean differences between regions predicted as the same class
-        return hp.triplet_loss_weight*total_similarity_loss
+        return hp.similarity_loss_weight*total_similarity_loss
 
 
 
