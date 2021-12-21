@@ -372,7 +372,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
         #the sum of mean differences between regions predicted as the same class
-        return hp.similarity_loss_weight*(total_similarity_loss+self.epsilon)
+        return hp.similarity_loss_weight*(total_similarity_loss+hp.epsilon)
 
 
 
