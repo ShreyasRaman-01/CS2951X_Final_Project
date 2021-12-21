@@ -419,7 +419,7 @@ def visualize_predictions(model,logs_path, test_data):
         filtered_origin_rois = (filtered_origin_rois*int(1/model.feat_map_scaling)).numpy()
 
         #first plot the sample image, then plot the rois on top
-        plt.imshow(sample)
+        plt.imshow(tf.squeeze(sample).numpy())
 
         reformatted_rois = []
 
