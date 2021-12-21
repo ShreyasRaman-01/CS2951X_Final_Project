@@ -261,7 +261,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             total_loss_train.append(train_loss)
 
             #update progress bar on each batch
-            progbar.update(batch_no+1, [ ('train_loss', loss_value) ])
+            progbar.update(batch_no+1, [ ('train_loss', train_loss) ])
 
 
 
