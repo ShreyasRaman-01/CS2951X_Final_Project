@@ -533,7 +533,7 @@ def main_eval(ARGS):
     else:
         raise Exception('cannot evaluate the model when pretrained load_weights is not specified')
 
-
+    pdb.set_trace()
 
     visualize_predictions(model,logs_path, data_generator.test)
 
