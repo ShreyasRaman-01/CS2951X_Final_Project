@@ -4,7 +4,7 @@ All hyperparameters to the WSDDN model
 '''
 
 #number of epochs to run training
-num_epochs = 50
+num_epochs = 10
 
 #frequency of batches with which to record validation results
 validation_batch_freq = 10
