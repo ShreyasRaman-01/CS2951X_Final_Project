@@ -399,7 +399,7 @@ def visualize_predictions(model,logs_path, test_data):
     test_batch_idx = np.random.choice(range(len(test_data)), size=1, replace= False)
     test_data = test_data[test_batch_idx]
 
-    test_sample_idx = np.random.choice(range(len(test_data[0])), size=3, replace=False)
+    test_sample_idx = np.random.choice(range(len(test_data)), size=3, replace=False)
 
     #convert paths to images
     test_sample = [ np.asarray(Image.open(test_data[i][0]).resize(hp.reshaped_image_size)) for i in test_sample_idx]
