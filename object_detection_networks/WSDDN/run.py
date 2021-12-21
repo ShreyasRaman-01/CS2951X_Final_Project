@@ -523,7 +523,7 @@ def main_eval(ARGS):
 
     test_image = data_generator.test_data[0][0]
 
-    model.call(np.asarray(Image.open(test_image[0]).resize(hp.reshaped_image_size)), None, False)
+    model.call( tf.expand_dims(np.asarray(Image.open(test_image[0]).resize(hp.reshaped_image_size)), axis=0), None, False)
 
     if ARGS.load_weights is not None:
         if ARGS.backbone=='VGG16':
