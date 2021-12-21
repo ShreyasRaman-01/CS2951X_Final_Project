@@ -6,9 +6,11 @@ from datetime import datetime
 from PIL import Image
 import hyperparameters as hp
 from wsddn import WeaklySupervisedDetection as WSDDN_Model, learning_rate_scheduler
-# from preprocessing import preprocessing_factory
 from matplotlib import pyplot as plt
 import numpy as np
+
+#import for logging metrics + losses
+import pandas as pd
 
 #for progress bar with metrics update
 from keras.utils import generic_utils
@@ -205,7 +207,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
             loss_value = loss_value/len(image_batch) #loss averaged over batch
 
-        pdb.set_trace()
+        # pdb.set_trace()
         grads = tape.gradient(loss_value, model.trainable_weights)
 
         #set the learning rate using the number of iterations for optimizer
@@ -282,6 +284,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                 total_loss_val.append(loss_value)
 
 
+
+
         end_time = time.time()
 
         print('Training Loss: ', loss_value)
@@ -296,6 +300,13 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
     plt.plot( range( hp.num_epochs*( len(train_data[0])//hp.validation_batch_freq )  )  , total_loss_val )
     plt.savefig( os.path.join(logs_path, 'val_loss.png') )
+
+    #saving log of all losses (training and validation)
+    logged_train_loss = total_loss_train[0:len(total_loss_train):hp.validation_batch_freq]
+    metric_dict = {'train_loss':logged_train_loss, 'val_loss':total_loss_val}
+    dataframe = pd.DataFrame(metric_dict)
+    dataframe.to_csv(os.path.join(logs_path, 'loss_data.csv'))
+
 
     return total_loss_train, total_loss_val
 
