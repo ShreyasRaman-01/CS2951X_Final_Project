@@ -259,7 +259,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
             progbar.update(batch_no, [ ('loss', loss_value) ])
 
-            pdb.set_trace()
+            # pdb.set_trace()
 
             #run model on validation dataset to get validation loss metrics
             if (batch_no)%hp.validation_batch_freq==0:
