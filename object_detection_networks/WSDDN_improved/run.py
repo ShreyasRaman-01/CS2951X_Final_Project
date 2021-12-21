@@ -208,7 +208,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
 
                 #if no ROIs or regions found, skip to the next image to train on
-                if (output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None):
+                if (output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None,None):
                     continue
 
                 loss_value = loss_value + hp.cross_entropy_loss_weight*model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(label, tf.float32)) + similarity_loss + triplet_loss + model.l2_regularizer() + spatial_regularizer_output
@@ -338,21 +338,26 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
     plt.xlabel('batch number')
     plt.ylabel('training loss')
     plt.savefig( os.path.join(logs_path, 'train_loss.png') )
+    plt.clf()
 
-    plt.plot( range(len(total_loss_val))  , total_loss_val )
+    plot_val_loss = val_loss[0:len(val_loss):2]
+    plt.plot(  range(0, 10*len(plot_val_loss), 10)  , plot_val_loss )
     plt.title('Validation loss by batch')
     plt.xlabel('batch number')
-    plt.ylabel('testing loss')
+    plt.ylabel('validation loss')
     plt.savefig( os.path.join(logs_path, 'val_loss.png') )
+    plt.clf()
 
-    plot_loss_train = total_loss_train[0:len(total_loss_train):hp.validation_batch_freq]
+    plot_train_loss = train_loss[0:len(train_loss):hp.validation_batch_freq]
 
-    plt.plot( range(len(plot_loss_train)), plot_loss_train, label = 'training')
-    plt.plot(range(len(total_loss_val)), total_loss_val, label = 'validation' )
+    plt.plot( range(0,10*len(plot_train_loss),10), plot_train_loss, label='training'  )
+    plt.plot(range(0,10*len(plot_val_loss),10), plot_val_loss, label = 'validation' )
     plt.title('Training & Validation loss by batch')
     plt.xlabel('batch number')
-    plt.ylabel('training/validation loss')
-    plt.savefig( os.path.join(logs_path, 'train_val_loss.png') )
+    plt.ylabel('train/validation loss')
+    plt.legend()
+    plt.savefig(os.path.join(logs_path,'train_val_loss.png'))
+    plt.clf()
 
 
     return total_loss_train, total_loss_val
