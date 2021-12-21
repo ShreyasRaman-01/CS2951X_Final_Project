@@ -205,7 +205,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
                 # pdb.set_trace()
                 output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output = model.call(image, label, spatial_reg)
-
+                print(similarity_loss, triplet_loss)
 
                 #if no ROIs or regions found, skip to the next image to train on
                 if (output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None,None):
