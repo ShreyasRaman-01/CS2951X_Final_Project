@@ -535,6 +535,8 @@ def main_eval(ARGS):
 
     pdb.set_trace()
 
+    logs_path = os.path.join("logs" , str(hp.experiment_number) )
+
     visualize_predictions(model,logs_path, data_generator.test)
 
 
