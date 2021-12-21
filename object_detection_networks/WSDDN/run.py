@@ -507,8 +507,7 @@ def main_eval(ARGS):
     # logs_path = os.path.join("logs" , str(hp.experiment_number) )
     #
     # visualize_losses(logs_path)
-    #
-    #
+    
     if ARGS.task=='train':
         raise Exception('cannot run the evaluation script when the \'train\' argument is present ')
 
