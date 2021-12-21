@@ -303,7 +303,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         for i in range(hp.num_classes+1):
 
             #if there are no regions predicted to be in a given class
-            if tf.reduce_sum(tf.cast(region_predictions==i), dtype=tf.int8)) == 0:
+            if tf.reduce_sum(tf.cast(region_predictions==i, dtype=tf.int8)) == 0:
                 continue
 
             class_filtered_features = normalized_rois_feature[(region_predictions==i)]
@@ -360,7 +360,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         for i in range(hp.num_classes + 1):
 
             #if there are no regions predicted to be in a given class
-            if tf.reduce_sum(tf.cast(region_predictions==i), dtype=tf.int8)) == 0:
+            if tf.reduce_sum(tf.cast(region_predictions==i, dtype=tf.int8)) == 0:
                 continue
 
             class_filtered_features = rois_feature[(region_predictions==i)]
