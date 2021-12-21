@@ -175,7 +175,7 @@ def parse_arguments():
     return parser.parse_args()
 
 def drawBoxes(boxes):
-
+    pdb.set_trace()
     for (x, y, w, h) in boxes:
         random_color = np.random.random(size=(3,))
         plt.hlines(y, x, x + w, colors= random_color)
