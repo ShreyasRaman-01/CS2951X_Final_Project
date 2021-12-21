@@ -339,7 +339,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
             # pdb.set_trace()
 
-        return hp.triplet_loss_weight*total_triplet_loss
+        return hp.triplet_loss_weight*(total_triplet_loss)/(hp.num_classes+1)
 
 
 
@@ -424,7 +424,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
             regularizer_sum += tf.reduce_sum(tf.pow(difference, 2))*0.5
 
 
-        return hp.spatial_reg_weight*(regularizer_sum/hp.num_classes)
+        return hp.spatial_reg_weight*(regularizer_sum/(hp.num_classes))
 
 
 
