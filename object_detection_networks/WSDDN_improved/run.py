@@ -209,6 +209,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
                 #if no ROIs or regions found, skip to the next image to train on
                 if (output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None,None):
+                    print("no output")
+                    pdb.set_trace()
                     continue
 
                 loss_value = loss_value + hp.cross_entropy_loss_weight*model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(label, tf.float32)) + similarity_loss + triplet_loss + model.l2_regularizer() + spatial_regularizer_output
@@ -217,6 +219,9 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             loss_value = loss_value/len(image_batch) #loss averaged over batch
 
         # pdb.set_trace()
+        if loss_value==0.0:
+            pdb.set_trace()
+
         grads = tape.gradient(loss_value, model.trainable_weights)
 
         #set the learning rate using the number of iterations for optimizer
