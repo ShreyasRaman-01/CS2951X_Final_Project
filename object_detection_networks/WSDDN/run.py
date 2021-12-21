@@ -412,7 +412,7 @@ def visualize_predictions(model,logs_path, test_data):
         output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(sample, None, False)
 
         #find the top 5 regions with max scores
-        top_scores = tf.argsort(scores, axis=0)
+        top_scores = tf.argsort(scores)
 
 
         filtered_origin_rois = (filtered_origin_rois*int(1/model.feat_map_scaling)).numpy()
