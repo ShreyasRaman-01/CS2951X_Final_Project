@@ -289,31 +289,31 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                     total_loss_val.append(val_loss)
 
 
-        end_time = time.time()
+            end_time = time.time()
 
-        print('Training Loss: ', train_loss)
-        print('Validation Loss: ', val_loss)
-        print('Elapsed Time: ', end_time-start_time)
+            print('Training Loss: ', train_loss)
+            print('Validation Loss: ', val_loss)
+            print('Elapsed Time: ', end_time-start_time)
 
-        #update the minimum loss reference + save the weights files
-        if val_loss < min_val_loss:
+            #update the minimum loss reference + save the weights files
+            if val_loss < min_val_loss:
 
-            print('\nMin. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
+                print('\nMin. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
 
-            min_val_loss = val_loss
-            model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
+                min_val_loss = val_loss
+                model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
 
-        print('Saving logs....')
-        #saving log of all losses (training and validation)
-        metric_dict = {'train_loss':total_loss_train}
-        dataframe = pd.DataFrame(metric_dict)
-        dataframe.to_csv(os.path.join(logs_path, 'train_loss_data.csv'))
+            print('Saving logs....')
+            #saving log of all losses (training and validation)
+            metric_dict = {'train_loss':total_loss_train}
+            dataframe = pd.DataFrame(metric_dict)
+            dataframe.to_csv(os.path.join(logs_path, 'train_loss_data.csv'))
 
-        metric_dict = {'val_loss':total_loss_val}
-        dataframe = pd.DataFrame(metric_dict)
-        dataframe.to_csv(os.path.join(logs_path, 'val_loss_data.csv'))
+            metric_dict = {'val_loss':total_loss_val}
+            dataframe = pd.DataFrame(metric_dict)
+            dataframe.to_csv(os.path.join(logs_path, 'val_loss_data.csv'))
 
-        print('Saved logs!')
+            print('Saved logs!')
 
 
 
