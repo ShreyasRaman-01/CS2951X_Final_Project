@@ -365,7 +365,8 @@ def visualize_losses(logs_path):
     plt.savefig( os.path.join(logs_path, 'train_loss.png') )
     plt.clf()
 
-    plt.plot(  range(0, len(train_loss), 10)  , val_loss )
+    plot_val_loss = val_loss[0:len(val_loss):2]
+    plt.plot(  range(0, 10*len(plot_val_loss), 10)  , plot_val_loss )
     plt.title('Validation loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('validation loss')
@@ -373,9 +374,9 @@ def visualize_losses(logs_path):
     plt.clf()
 
     plot_train_loss = train_loss[0:len(train_loss):hp.validation_batch_freq]
-    plot_val_loss = val_loss[0:len(val_loss):2]
-    plt.plot( range(0,len(train_loss),10), plot_train_loss, label='training'  )
-    plt.plot(range(0,len(train_loss),10), plot_val_loss, label = 'validation' )
+
+    plt.plot( range(0,10*len(plot_train_loss),10), plot_train_loss, label='training'  )
+    plt.plot(range(0,10*len(plot_val_loss),10), plot_val_loss, label = 'validation' )
     plt.title('Training & Validation loss by batch')
     plt.xlabel('batch number')
     plt.ylabel('train/validation loss')
