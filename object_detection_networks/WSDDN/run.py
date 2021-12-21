@@ -554,5 +554,5 @@ if __name__=='__main__':
     #obtaining args input for training/testing
     ARGS = parse_arguments()
 
-    # main(ARGS)
-    main_eval(ARGS)
+    main(ARGS)
+    # main_eval(ARGS)
