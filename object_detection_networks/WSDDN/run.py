@@ -177,7 +177,7 @@ def parse_arguments():
 def drawBoxes(boxes):
 
     for (x, y, w, h) in boxes:
-        random_color = np.random.randint(0,255,size=(3,))
+        random_color = np.random.random(0,1,size=(3,))
         plt.hlines(y, x, x + w, colors= random_color)
         plt.hlines(y + h, x, x + w, colors= random_color)
         plt.vlines(x, y, y + h, colors= random_color)
