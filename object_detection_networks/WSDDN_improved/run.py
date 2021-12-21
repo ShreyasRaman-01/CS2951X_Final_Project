@@ -548,7 +548,7 @@ def main_eval(ARGS):
     else:
         raise Exception('cannot evaluate the model when pretrained load_weights is not specified')
 
-    pdb.set_trace()
+    # pdb.set_trace()
 
     logs_path = os.path.join("logs" , str(hp.experiment_number) )
 

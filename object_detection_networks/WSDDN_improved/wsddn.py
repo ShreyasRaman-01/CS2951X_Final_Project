@@ -260,7 +260,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
         #hadamard product (elementwise) across detection and classification outputs
         scores = tf.multiply(fc_class_out, fc_detect_out)
 
-        pdb.set_trace()
+        
         #compute new losses by region i.e. all regions with same class should have similar descriptors
         similarity_loss = self.similarity_loss(fc_detect_out, rois_feature)
 
