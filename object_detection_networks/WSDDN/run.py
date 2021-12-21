@@ -255,8 +255,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
             #running training for each image
             train_loss = train_step(x_batch, y_batch, True)
+            train_loss = train_loss.numpy()
             pdb.set_trace()
-
 
             total_loss_train.append(train_loss)
 
@@ -282,6 +282,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
                     #running training for each image
                     val_loss = train_step(x_val, y_val, True)
+                    val_loss = val_loss.numpy()
 
                     print('val_loss: ', val_loss)
 
