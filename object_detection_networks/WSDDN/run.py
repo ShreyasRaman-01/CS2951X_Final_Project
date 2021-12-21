@@ -407,7 +407,9 @@ def visualize_predictions(model,logs_path, test_data):
     #run the model on inference mode for each sample: without spatial regularization where label is not necessary
     for i,sample in enumerate(test_sample):
 
-        output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(sample[0], None, False)
+        sample= tf.expand_dims(sample, axis=0)
+
+        output, scores, filtered_origin_rois, spatial_regularizer_output = model.call(sample, None, False)
 
 
         filtered_origin_rois = (filtered_origin_rois*model.feat_map_scaling).numpy()
