@@ -378,7 +378,8 @@ def visualize_losses(logs_path):
     plt.plot(range(len(plot_val_loss)), plot_val_loss, label = 'validation' )
     plt.title('Training & Validation loss by batch')
     plt.xlabel('batch number')
-    plt.ylabel('train/test loss')
+    plt.ylabel('train/validation loss')
+    plt.legend()
     plt.savefig(os.path.join(logs_path,'train_val_loss.png'))
     plt.clf()
 
