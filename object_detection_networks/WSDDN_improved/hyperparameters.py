@@ -45,7 +45,7 @@ reshaped_image_size = (200,200)
 
 
 #compares the feature map discrepancies at fc7 for regions with IoU > threshold
-spatial_reg_iou_threshold = 0.8
+spatial_reg_iou_threshold = 0.7
 
 #for the sake of separating out graphical outputs + weights
 experiment_number = 1
