@@ -269,6 +269,12 @@ class WeaklySupervisedDetection(tf.keras.Model):
         triplet_loss = self.difference_triplet_loss(fc_detect_out, rois_feature)
 
 
+        output = tf.reduce_sum(scores, axis=0) #summing scores for each class: across the regions
+
+        #clipping outputs within 0-1 range
+        output = tf.clip_by_value(output, 0.0, 1.0, name="clipping_scores")
+
+
         #add spatial regularization if needed
         spatial_regularizer_output = 0
 
@@ -279,7 +285,7 @@ class WeaklySupervisedDetection(tf.keras.Model):
 
 
 
-        return  similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output
+        return  output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output
 
 
 

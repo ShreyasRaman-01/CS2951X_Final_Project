@@ -55,3 +55,4 @@ triplet_soft_margin = 1e-5
 
 triplet_loss_weight = 1
 similarity_loss_weight = 1
+cross_entropy_loss_weight = 1e-1

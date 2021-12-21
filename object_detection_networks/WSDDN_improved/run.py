@@ -205,14 +205,14 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
 
 
-                similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output = model.call(image, spatial_reg)
+                output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output = model.call(image, spatial_reg)
 
 
                 #if no ROIs or regions found, skip to the next image to train on
-                if (output, scores, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None):
+                if (output, similarity_loss, triplet_loss, filtered_origin_rois, spatial_regularizer_output)==(None,None,None,None):
                     continue
 
-                loss_value = loss_value + similarity_loss + triplet_loss + model.l2_regularizer() + spatial_regularizer_output
+                loss_value = loss_value + hp.cross_entropy_loss_weight*model.crossentropy_loss(tf.expand_dims(output, axis=0), tf.cast(label, tf.float32)) + similarity_loss + triplet_loss + model.l2_regularizer() + spatial_regularizer_output
 
 
             loss_value = loss_value/len(image_batch) #loss averaged over batch
