@@ -291,7 +291,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
         end_time = time.time()
 
-        print('Training Loss: ', loss_value)
+        print('Training Loss: ', train_loss)
         print('Validation Loss: ', val_loss)
         print('Elapsed Time: ', end_time-start_time)
 
