@@ -284,18 +284,8 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
                     val_loss, val_num_regions  = train_step(x_val, y_val, True)
                     val_loss = val_loss.numpy()
 
-                    print('val_loss: ', val_loss)
-                    print('val_regions': val_num_regions)
-
-                    #update the minimum loss reference + save the weights files
-                    if val_loss < min_val_loss:
-
-                        print('\n Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
-
-                        min_val_loss = val_loss
-                        model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
-
-
+                    print('val_loss: ', val_loss, ' | val_regions: ', val_num_regions)
+                    
                     total_loss_val.append(val_loss)
 
 
@@ -304,6 +294,14 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         print('Training Loss: ', loss_value)
         print('Validation Loss: ', val_loss)
         print('Elapsed Time: ', end_time-start_time)
+
+        #update the minimum loss reference + save the weights files
+        if val_loss < min_val_loss:
+
+            print('\n Min. validation loss reduced from {} to {}, saving weights'.format(min_val_loss, val_loss))
+
+            min_val_loss = val_loss
+            model.save_weights(  os.path.join( checkpoint_path, 'epoch_{}_loss{}.hdf5'.format(epoch, val_loss) )  )
 
         print('Saving logs....')
         #saving log of all losses (training and validation)
