@@ -266,7 +266,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
 
 
             #run model on validation dataset to get validation loss metrics
-            if (batch_no+1)%hp.validation_batch_freq==0:
+            if (batch_no)%hp.validation_batch_freq==0:
 
                 print('\nRunning validation set...')
 
