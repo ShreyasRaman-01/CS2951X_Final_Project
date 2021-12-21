@@ -248,7 +248,6 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             np.random.shuffle(data_batch)
 
             x_batch = [ np.asarray(Image.open(x[0]).resize(hp.reshaped_size)) for x in data_batch]
-            pdb.set_trace()
 
             y_batch = list(data_batch[:,1])
 
@@ -266,6 +265,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
             if (batch_no)%hp.validation_batch_freq==0:
 
                 for batch_no, val_data_batch in enumerate(val_data):
+
                     #shuffle the validation dataset first (both images and labels)
                     np.random.shuffle(val_data_batch)
 
