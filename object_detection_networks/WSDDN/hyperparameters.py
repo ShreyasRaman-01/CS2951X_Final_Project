@@ -48,4 +48,4 @@ reshaped_image_size = (200,200)
 spatial_reg_iou_threshold = 0.8
 
 #for the sake of separating out graphical outputs + weights
-experiment_number = 3
+experiment_number = 4

@@ -230,7 +230,7 @@ def train(model, train_data, val_data, checkpoint_path, logs_path):
         #applying gradients with the custom optimizer
         model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
 
-        return loss_value, similarity_loss, triplet_loss, filtered_origin_rois.shape[0]
+        return loss_value, similarity_loss, triplet_loss, filtered_origin_rois.shape[0] if filtered_origin_rois!=None else 0
 
 
     #logging the loss over epochs

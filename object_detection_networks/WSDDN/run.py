@@ -474,10 +474,19 @@ def main(ARGS):
     logs_path = os.path.join("logs" , str(hp.experiment_number) )
 
 
+    #collect the dataset into a dictionary list
+    data_generator = DatasetCreator(ARGS.atari_game, ARGS.image_size)
+    data_generator.create_datasets(PATH_TO_DATA)
+
     #create WSDDN model instance + pass in backbone architecture to use e.g. VGG16 or VGG19
     model = WSDDN_Model(ARGS.backbone)
 
     if ARGS.load_weights is not None:
+
+        model.compile()
+        test_image = data_generator.test_data[0][0]
+        model( tf.expand_dims(np.asarray(Image.open(test_image[0]).resize(hp.reshaped_image_size)), axis=0), None, False)
+
         if ARGS.backbone=='VGG16':
             model.load_weights(ARGS.load_weights, by_name = True)
         elif ARGS.backbone=='VGG19':
@@ -489,11 +498,6 @@ def main(ARGS):
 
     if ARGS.task=='train' and not os.path.exists(logs_path):
         os.makedirs(logs_path)
-
-
-    #collect the dataset into a dictionary list
-    data_generator = DatasetCreator(ARGS.atari_game, ARGS.image_size)
-    data_generator.create_datasets(PATH_TO_DATA)
 
 
 
