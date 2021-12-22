@@ -460,14 +460,6 @@ def main(ARGS):
     hp.num_classes = int(ARGS.num_classes)
 
 
-    # if ARGS.load_weights is not None:
-    #     ARGS.load_weights = os.path.abspath(ARGS.load_weights)
-    #
-    #     # Get timestamp and epoch from filename
-    #     regex = r"(?:.+)(?:\.e)(\d+)(?:.+)(?:.h5)"
-    #     init_epoch = int(re.match(regex, ARGS.load_weights).group(1)) + 1
-    #     timestamp = os.path.basename(os.path.dirname(ARGS.load_checkpoint))
-
 
     #extracting data to save the weight checkpoints and logs (for losses or energy function)
     checkpoint_path = os.path.join("weights", str(hp.experiment_number) )
@@ -483,7 +475,6 @@ def main(ARGS):
 
     if ARGS.load_weights is not None:
 
-        model.compile()
         test_image = data_generator.test_data[0][0]
         model( tf.expand_dims(np.asarray(Image.open(test_image[0]).resize(hp.reshaped_image_size)), axis=0), None, False)
 
